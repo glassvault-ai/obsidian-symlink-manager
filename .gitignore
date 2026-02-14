@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build output
+main.js
+*.js.map
+
+# Obsidian
+data.json
+
+# Memory vault (symlinked)
+memory/
+
+# OS
+.DS_Store
