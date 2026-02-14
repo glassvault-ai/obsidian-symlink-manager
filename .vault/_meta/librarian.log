@@ -1,0 +1,6 @@
+2026-02-14 17:16:25  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260214-231625) ===
+2026-02-14 17:16:25  INFO   Processing 3 notes for tidying
+2026-02-14 17:16:25  INFO   Detecting near-duplicate tags...
+2026-02-14 17:16:29  INFO   add_wikilinks: Obsidian Symlink Plugin — Project Overview.md — Added 1 wikilinks: ['Symlink Plugin Build Phases']
+2026-02-14 17:16:30  INFO   Tidying complete: 1 notes modified, 1 wikilinks added
+2026-02-14 17:16:30  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
