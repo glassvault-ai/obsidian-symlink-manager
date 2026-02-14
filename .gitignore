@@ -8,8 +8,5 @@ main.js
 # Obsidian
 data.json
 
-# Memory vault (symlinked)
-memory/
-
 # OS
 .DS_Store
