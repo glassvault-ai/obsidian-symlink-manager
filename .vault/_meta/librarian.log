@@ -90,3 +90,8 @@
 2026-02-14 21:43:03  INFO   add_wikilinks: existsSync follows symlinks — use lstatSync for broken symlink detection.md — Added 2 wikilinks: ['Clean up broken symlinks on deactivation', 'Symlink vs Directory Detection with lstatSync']
 2026-02-14 21:43:03  INFO   Tidying complete: 6 notes modified, 15 wikilinks added
 2026-02-14 21:43:04  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
+2026-02-15 09:46:40  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260215-154640) ===
+2026-02-15 09:46:40  INFO   Processing 51 notes for tidying
+2026-02-15 09:46:40  INFO   Detecting near-duplicate tags...
+2026-02-15 09:46:40  INFO   Tidying complete: no changes
+2026-02-15 09:46:43  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
