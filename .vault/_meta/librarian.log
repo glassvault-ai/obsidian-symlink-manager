@@ -71,3 +71,11 @@
 2026-02-14 20:45:21  INFO   add_wikilinks: FuzzySuggestModal onClose fires before onChooseItem.md — Added 2 wikilinks: ['FuzzySuggestModal Callback Pattern', 'FuzzySuggestModal for Vault Path Selection']
 2026-02-14 20:45:21  INFO   Tidying complete: 1 notes modified, 7 tags consolidated, 2 wikilinks added
 2026-02-14 20:45:22  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
+2026-02-14 20:51:59  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260215-025159) ===
+2026-02-14 20:51:59  INFO   Processing 40 notes for tidying
+2026-02-14 20:51:59  INFO   Detecting near-duplicate tags...
+2026-02-14 20:52:02  INFO   add_wikilinks: Delete Confirmation Before Removing Symlink.md — Added 2 wikilinks: ['Obsidian PluginSettingTab Pattern', 'Symlink Safety Never Delete the Source Folder']
+2026-02-14 20:52:02  INFO   add_wikilinks: Duplicate Symlink Detection at Creation Time.md — Added 2 wikilinks: ['On-Load Validation of Symlinks', 'Symlink Safety Loop Prevention']
+2026-02-14 20:52:03  INFO   add_wikilinks: Name Editing in Settings Tab.md — Added 3 wikilinks: ['Obsidian PluginSettingTab Pattern', 'Vault Root Path Access', 'Symlink Safety Loop Prevention']
+2026-02-14 20:52:03  INFO   Tidying complete: 3 notes modified, 7 wikilinks added
+2026-02-14 20:52:04  INFO   === Run complete: processed=0, skipped=0, errors=0 ===

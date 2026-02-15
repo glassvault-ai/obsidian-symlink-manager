@@ -179,6 +179,9 @@
   },
   "active": "af45dbb7925a3cf5",
   "lastOpenFiles": [
+    "Name Editing in Settings Tab.md",
+    "Duplicate Symlink Detection at Creation Time.md",
+    "Delete Confirmation Before Removing Symlink.md",
     "FuzzySuggestModal for Vault Path Selection.md",
     "FuzzySuggestModal onClose fires before onChooseItem.md",
     "The Create Symlink Flow.md",
@@ -201,9 +204,6 @@
     "Unique ID Generation for SymlinkEntry.md",
     "Vault Root Path Access.md",
     "Symlink vs Directory Detection with lstatSync.md",
-    "Command Registration and Routing.md",
-    "Obsidian PluginSettingTab Pattern.md",
-    "Electron Dialog for Source Folder Selection.md",
-    "On-Load Validation of Symlinks.md"
+    "Command Registration and Routing.md"
   ]
 }
