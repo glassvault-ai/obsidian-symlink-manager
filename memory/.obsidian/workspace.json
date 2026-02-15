@@ -179,6 +179,9 @@
   },
   "active": "af45dbb7925a3cf5",
   "lastOpenFiles": [
+    "FuzzySuggestModal for Vault Path Selection.md",
+    "FuzzySuggestModal onClose fires before onChooseItem.md",
+    "The Create Symlink Flow.md",
     "Agents default to building — must be explicitly prompted to write notes first.md",
     "modals.ts File Structure for Phase 3.md",
     "Phase 3 Modifies main.ts createSymlinkFromPicker.md",
@@ -196,14 +199,11 @@
     "esbuild Config for Obsidian Plugins.md",
     "Ribbon Icon for Quick Access.md",
     "Unique ID Generation for SymlinkEntry.md",
-    "The Create Symlink Flow.md",
     "Vault Root Path Access.md",
     "Symlink vs Directory Detection with lstatSync.md",
     "Command Registration and Routing.md",
     "Obsidian PluginSettingTab Pattern.md",
-    "FuzzySuggestModal for Vault Path Selection.md",
     "Electron Dialog for Source Folder Selection.md",
-    "On-Load Validation of Symlinks.md",
-    "Symlink Toggle Semantics.md"
+    "On-Load Validation of Symlinks.md"
   ]
 }

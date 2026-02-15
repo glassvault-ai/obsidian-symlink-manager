@@ -57,3 +57,17 @@
 2026-02-14 19:42:42  INFO   add_wikilinks: modals.ts File Structure for Phase 3.md — Added 3 wikilinks: ['Vault Folder Picker Modal Implementation', 'FuzzySuggestModal Callback Pattern', 'The Create Symlink Flow']
 2026-02-14 19:42:42  INFO   Tidying complete: 9 notes modified, 26 wikilinks added
 2026-02-14 19:42:43  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
+2026-02-14 20:45:18  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260215-024518) ===
+2026-02-14 20:45:18  INFO   Processing 37 notes for tidying
+2026-02-14 20:45:18  INFO   Detecting near-duplicate tags...
+2026-02-14 20:45:18  INFO   consolidate_tags: Electron Dialog for Source Folder Selection.md — Consolidated: ['electron', 'folder-picker', 'ux', 'modals'] -> ['electron', 'folder-picker', 'ux', 'modal']
+2026-02-14 20:45:18  INFO   consolidate_tags: FuzzySuggestModal Callback Pattern.md — Consolidated: ['phase-3', 'modals', 'async-pattern', 'implementation'] -> ['phase-3', 'modal', 'async-pattern', 'implementation']
+2026-02-14 20:45:18  INFO   consolidate_tags: FuzzySuggestModal for Vault Path Selection.md — Consolidated: ['obsidian', 'modals', 'fuzzy-search', 'ux'] -> ['obsidian', 'modal', 'fuzzy-search', 'ux']
+2026-02-14 20:45:18  INFO   consolidate_tags: The Create Symlink Flow.md — Consolidated: ['create-flow', 'ux', 'modals', 'architecture'] -> ['create-flow', 'ux', 'modal', 'architecture']
+2026-02-14 20:45:18  INFO   consolidate_tags: Toggle Symlink Command needs FuzzySuggestModal.md — Consolidated: ['phase-3', 'modals', 'toggle', 'commands'] -> ['phase-3', 'modal', 'toggle', 'commands']
+2026-02-14 20:45:18  INFO   consolidate_tags: Vault Folder Picker Modal Implementation.md — Consolidated: ['phase-3', 'modals', 'vault-picker', 'implementation'] -> ['phase-3', 'modal', 'vault-picker', 'implementation']
+2026-02-14 20:45:18  INFO   consolidate_tags: modals.ts File Structure for Phase 3.md — Consolidated: ['phase-3', 'modals', 'file-structure', 'implementation'] -> ['phase-3', 'modal', 'file-structure', 'implementation']
+2026-02-14 20:45:18  INFO   Consolidated 7 tag uses
+2026-02-14 20:45:21  INFO   add_wikilinks: FuzzySuggestModal onClose fires before onChooseItem.md — Added 2 wikilinks: ['FuzzySuggestModal Callback Pattern', 'FuzzySuggestModal for Vault Path Selection']
+2026-02-14 20:45:21  INFO   Tidying complete: 1 notes modified, 7 tags consolidated, 2 wikilinks added
+2026-02-14 20:45:22  INFO   === Run complete: processed=0, skipped=0, errors=0 ===

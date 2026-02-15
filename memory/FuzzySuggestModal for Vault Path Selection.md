@@ -4,7 +4,7 @@ type: fact
 status: active
 tags:
 - obsidian
-- modals
+- modal
 - fuzzy-search
 - ux
 scope: project

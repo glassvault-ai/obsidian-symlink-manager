@@ -6,7 +6,7 @@ tags:
 - electron
 - folder-picker
 - ux
-- modals
+- modal
 scope: project
 created_at: '2026-02-15T01:25:49.737290+00:00'
 created_by: ai-agent

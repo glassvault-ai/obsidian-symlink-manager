@@ -4,7 +4,7 @@ type: lesson
 status: active
 tags:
 - phase-3
-- modals
+- modal
 - async-pattern
 - implementation
 scope: project

@@ -5,7 +5,7 @@ status: active
 tags:
 - create-flow
 - ux
-- modals
+- modal
 - architecture
 scope: project
 created_at: '2026-02-15T01:26:30.985426+00:00'

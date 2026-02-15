@@ -4,7 +4,7 @@ type: fact
 status: active
 tags:
 - phase-3
-- modals
+- modal
 - vault-picker
 - implementation
 scope: project
