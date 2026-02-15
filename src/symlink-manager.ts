@@ -22,6 +22,15 @@ function getSymlinkType(): "dir" | "junction" {
 	return process.platform === "win32" ? "junction" : "dir";
 }
 
+/** Resolve a path to its real location, falling back to path.resolve if realpath fails. */
+function safeRealpath(p: string): string {
+	try {
+		return fs.realpathSync(p);
+	} catch {
+		return path.resolve(p);
+	}
+}
+
 /** Resolve the absolute filesystem path for a symlink inside the vault. */
 function resolveVaultTarget(vaultBasePath: string, vaultPath: string, name: string): string {
 	return path.join(vaultBasePath, vaultPath, name);
@@ -130,13 +139,15 @@ export function toggleSymlink(
 		const result = removeSymlink(vaultBasePath, entry);
 		return { result, active: result.success ? false : true };
 	} else {
-		// Turn on: check if symlink already exists and is correct
+		// Turn on: check if symlink already exists and points to the correct source.
+		// Use realpathSync for robust comparison across platform path formats.
 		const targetPath = path.join(vaultBasePath, entry.vaultPath, entry.name);
 		try {
 			const stat = fs.lstatSync(targetPath);
 			if (stat.isSymbolicLink()) {
-				const linkTarget = fs.readlinkSync(targetPath);
-				if (path.resolve(linkTarget) === path.resolve(entry.sourcePath)) {
+				const linkReal = safeRealpath(targetPath);
+				const sourceReal = safeRealpath(entry.sourcePath);
+				if (linkReal === sourceReal) {
 					return { result: { success: true, message: "Symlink already exists" }, active: true };
 				}
 			}

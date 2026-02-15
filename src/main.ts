@@ -21,7 +21,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 		this.addRibbonIcon("link", "Link external folder", () => {
 			this.createSymlinkFromPicker();
 		});
-		this.validateSymlinksOnLoad();
+		await this.validateSymlinksOnLoad();
 	}
 
 	private registerCommands(): void {
@@ -83,7 +83,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 
 	// --- Startup validation ---
 
-	private validateSymlinksOnLoad(): void {
+	private async validateSymlinksOnLoad(): Promise<void> {
 		const basePath = this.getVaultBasePath();
 		let anyChanged = false;
 		const toRemove: string[] = [];
@@ -135,7 +135,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 		}
 
 		if (anyChanged) {
-			this.saveSettings();
+			await this.saveSettings();
 		}
 	}
 
@@ -224,12 +224,12 @@ export default class SymlinkManagerPlugin extends Plugin {
 		const entry = this.settings.symlinks[index];
 		if (entry === undefined) return false;
 
-		if (entry.active) {
-			const result = removeSymlink(basePath, entry);
-			if (!result.success) {
-				new Notice(`Symlink Manager: ${result.message}`);
-				return false;
-			}
+		// Always attempt unlink based on filesystem state, not just active flag.
+		// Handles metadata drift (e.g. crash during toggle leaving orphaned symlink).
+		const result = removeSymlink(basePath, entry);
+		if (!result.success) {
+			new Notice(`Symlink Manager: ${result.message}`);
+			return false;
 		}
 
 		this.settings.symlinks.splice(index, 1);
@@ -305,14 +305,22 @@ export default class SymlinkManagerPlugin extends Plugin {
 					// Revert name, try to restore old symlink
 					entry.name = oldName;
 					const restoreParams = { ...params, name: oldName };
-					createSymlink(restoreParams);
+					const restore = createSymlink(restoreParams);
+					if (!restore.success) {
+						entry.active = false;
+						await this.saveSettings();
+					}
 					new Notice(`Symlink Manager: Rename failed — ${result.message}`);
 					return false;
 				}
 			} else {
 				entry.name = oldName;
 				const restoreParams = { ...params, name: oldName };
-				createSymlink(restoreParams);
+				const restore = createSymlink(restoreParams);
+				if (!restore.success) {
+					entry.active = false;
+					await this.saveSettings();
+				}
 				new Notice(`Symlink Manager: Rename failed — ${validation.message}`);
 				return false;
 			}
@@ -324,7 +332,8 @@ export default class SymlinkManagerPlugin extends Plugin {
 
 	async toggleAll(active: boolean): Promise<void> {
 		const basePath = this.getVaultBasePath();
-		let anyChanged = false;
+		let succeeded = 0;
+		let failed = 0;
 
 		for (const entry of this.settings.symlinks) {
 			if (entry.active === active) continue;
@@ -332,15 +341,22 @@ export default class SymlinkManagerPlugin extends Plugin {
 			const { result, active: newState } = toggleSymlink(basePath, entry);
 			if (result.success) {
 				entry.active = newState;
-				anyChanged = true;
+				succeeded++;
 			} else {
+				failed++;
 				new Notice(`Symlink Manager: ${entry.name} — ${result.message}`);
 			}
 		}
 
-		if (anyChanged) {
+		if (succeeded > 0) {
 			await this.saveSettings();
 		}
-		new Notice(`Symlink Manager: All symlinks ${active ? "activated" : "deactivated"}`);
+
+		const action = active ? "activated" : "deactivated";
+		if (failed === 0) {
+			new Notice(`Symlink Manager: ${succeeded} symlink${succeeded === 1 ? "" : "s"} ${action}`);
+		} else {
+			new Notice(`Symlink Manager: ${succeeded} ${action}, ${failed} failed`);
+		}
 	}
 }
