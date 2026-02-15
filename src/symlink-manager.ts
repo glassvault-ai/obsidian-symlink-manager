@@ -93,17 +93,22 @@ export function createSymlink(params: CreateSymlinkParams): SymlinkResult {
 export function removeSymlink(vaultBasePath: string, entry: SymlinkEntry): SymlinkResult {
 	const targetPath = resolveVaultTarget(vaultBasePath, entry.vaultPath, entry.name);
 
-	if (!fs.existsSync(targetPath)) {
-		return { success: true, message: "Symlink already removed" };
-	}
-
+	// Use lstatSync, NOT existsSync — existsSync follows symlinks and returns
+	// false for broken symlinks, which would skip cleanup of dead pointers.
+	let isSymlink = false;
 	try {
 		const stat = fs.lstatSync(targetPath);
 		if (!stat.isSymbolicLink()) {
 			return { success: false, message: `Path is not a symlink — refusing to remove: ${targetPath}` };
 		}
+		isSymlink = true;
 	} catch {
-		return { success: false, message: `Cannot read path: ${targetPath}` };
+		// lstat failed — nothing exists at this path
+		return { success: true, message: "Symlink already removed" };
+	}
+
+	if (!isSymlink) {
+		return { success: true, message: "Symlink already removed" };
 	}
 
 	try {
@@ -125,7 +130,21 @@ export function toggleSymlink(
 		const result = removeSymlink(vaultBasePath, entry);
 		return { result, active: result.success ? false : true };
 	} else {
-		// Turn on: validate and create the symlink
+		// Turn on: check if symlink already exists and is correct
+		const targetPath = path.join(vaultBasePath, entry.vaultPath, entry.name);
+		try {
+			const stat = fs.lstatSync(targetPath);
+			if (stat.isSymbolicLink()) {
+				const linkTarget = fs.readlinkSync(targetPath);
+				if (path.resolve(linkTarget) === path.resolve(entry.sourcePath)) {
+					return { result: { success: true, message: "Symlink already exists" }, active: true };
+				}
+			}
+		} catch {
+			// Doesn't exist — proceed with creation
+		}
+
+		// Validate and create the symlink
 		const params: CreateSymlinkParams = {
 			sourcePath: entry.sourcePath,
 			vaultBasePath,

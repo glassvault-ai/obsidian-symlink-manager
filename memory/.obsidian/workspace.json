@@ -179,6 +179,8 @@
   },
   "active": "af45dbb7925a3cf5",
   "lastOpenFiles": [
+    "existsSync follows symlinks — use lstatSync for broken symlink detection.md",
+    "Clean up broken symlinks on deactivation.md",
     "Settings tab must refresh after create flow.md",
     "Name editing uses blur not onChange.md",
     "Duplicate detection checks sourcePath only.md",
@@ -202,8 +204,6 @@
     "Core Engine Module Separation.md",
     "Handling Deleted Source Folders Gracefully.md",
     "Obsidian Notice API for User Feedback.md",
-    "esbuild Config for Obsidian Plugins.md",
-    "Ribbon Icon for Quick Access.md",
-    "Unique ID Generation for SymlinkEntry.md"
+    "esbuild Config for Obsidian Plugins.md"
   ]
 }

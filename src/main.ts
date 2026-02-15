@@ -86,6 +86,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 	private validateSymlinksOnLoad(): void {
 		const basePath = this.getVaultBasePath();
 		let anyChanged = false;
+		const toRemove: string[] = [];
 
 		for (const entry of this.settings.symlinks) {
 			if (!entry.active) continue;
@@ -93,9 +94,13 @@ export default class SymlinkManagerPlugin extends Plugin {
 			const status = validateEntry(basePath, entry);
 
 			if (!status.sourceExists) {
-				entry.active = false;
+				// Clean up the broken symlink from disk and remove the entry entirely
+				if (status.symlinkExists) {
+					removeSymlink(basePath, entry);
+				}
+				toRemove.push(entry.id);
 				anyChanged = true;
-				new Notice(`Symlink Manager: Source missing for "${entry.name}" — deactivated`);
+				new Notice(`Symlink Manager: Source missing for "${entry.name}" — removed`);
 				continue;
 			}
 
@@ -121,6 +126,12 @@ export default class SymlinkManagerPlugin extends Plugin {
 					new Notice(`Symlink Manager: Cannot restore "${entry.name}" — ${validation.message}`);
 				}
 			}
+		}
+
+		if (toRemove.length > 0) {
+			this.settings.symlinks = this.settings.symlinks.filter(
+				(e) => !toRemove.includes(e.id),
+			);
 		}
 
 		if (anyChanged) {
