@@ -9,6 +9,7 @@ import {
 	validateEntry,
 } from "./symlink-manager";
 import { SymlinkManagerSettingTab } from "./settings";
+import { pickVaultFolder, pickSymlinkToToggle } from "./modals";
 
 export default class SymlinkManagerPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS;
@@ -16,7 +17,46 @@ export default class SymlinkManagerPlugin extends Plugin {
 	async onload(): Promise<void> {
 		await this.loadSettings();
 		this.addSettingTab(new SymlinkManagerSettingTab(this.app, this));
+		this.registerCommands();
+		this.addRibbonIcon("link", "Link external folder", () => {
+			this.createSymlinkFromPicker();
+		});
 		this.validateSymlinksOnLoad();
+	}
+
+	private registerCommands(): void {
+		this.addCommand({
+			id: "link-external-folder",
+			name: "Link external folder",
+			callback: () => this.createSymlinkFromPicker(),
+		});
+
+		this.addCommand({
+			id: "toggle-symlink",
+			name: "Toggle symlink...",
+			callback: async () => {
+				if (this.settings.symlinks.length === 0) {
+					new Notice("Symlink Manager: No symlinks to toggle");
+					return;
+				}
+				const entry = await pickSymlinkToToggle(this.app, this.settings.symlinks);
+				if (entry) {
+					await this.toggleSymlinkEntry(entry.id);
+				}
+			},
+		});
+
+		this.addCommand({
+			id: "enable-all-symlinks",
+			name: "Enable all symlinks",
+			callback: () => this.toggleAll(true),
+		});
+
+		this.addCommand({
+			id: "disable-all-symlinks",
+			name: "Disable all symlinks",
+			callback: () => this.toggleAll(false),
+		});
 	}
 
 	async onunload(): Promise<void> {
@@ -91,6 +131,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 	// --- Create flow (folder picker → vault location → create) ---
 
 	async createSymlinkFromPicker(): Promise<void> {
+		// Step 1: Electron folder picker for source
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { remote } = require("electron");
 		const result = await remote.dialog.showOpenDialog({
@@ -103,12 +144,15 @@ export default class SymlinkManagerPlugin extends Plugin {
 		const sourcePath = result.filePaths[0] as string;
 		const sourceName = require("path").basename(sourcePath) as string;
 
-		// For now, place symlink at vault root. Phase 3 adds vault folder picker modal.
+		// Step 2: Vault folder picker for destination
+		const folder = await pickVaultFolder(this.app);
+		if (folder === null) return;
+
 		const entry: SymlinkEntry = {
 			id: crypto.randomUUID(),
 			name: sourceName,
 			sourcePath,
-			vaultPath: "",
+			vaultPath: folder.path,
 			active: false,
 		};
 
