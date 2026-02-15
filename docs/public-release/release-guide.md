@@ -16,29 +16,14 @@ Step-by-step guide for releasing Symlink Manager as a public open source Obsidia
 
 The Obsidian plugin registry points to a GitHub repo URL permanently. The repo should live under the GlassVault org.
 
-### Option A: Transfer the repo
+### Completed
 
-1. Go to `github.com/awmusicstudio/obsidian-symlink-plugin` > Settings > Danger Zone > Transfer ownership
-2. Transfer to `glassvault` org
-3. GitHub auto-redirects the old URL temporarily
-4. Update local remote:
-   ```bash
-   git remote set-url origin https://github.com/glassvault/obsidian-symlink-manager.git
-   ```
+Repo created at `glassvault-ai/obsidian-symlink-manager` with full commit history. Old repo deleted. Local remote updated:
+```bash
+git remote set-url origin https://github.com/glassvault-ai/obsidian-symlink-manager.git
+```
 
-### Option B: Fresh repo
-
-1. Create `glassvault/obsidian-symlink-manager` on GitHub
-2. Push:
-   ```bash
-   git remote set-url origin https://github.com/glassvault/obsidian-symlink-manager.git
-   git push -u origin main
-   ```
-
-### After moving
-
-- Update the README's release download link to point to the new repo
-- Optionally add `authorUrl` to manifest.json (e.g. `"authorUrl": "https://github.com/glassvault"`)
+README release link and `authorUrl` in manifest.json both point to `glassvault-ai`.
 
 ---
 

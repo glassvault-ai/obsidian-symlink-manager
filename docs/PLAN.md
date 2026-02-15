@@ -4,9 +4,9 @@
 
 ## Context
 
-Alex uses Obsidian as the visual layer for his GlassVault multi-vault system. He just created a symlink from his global Obsidian vault to a project's `memory/` folder and watched the graph view expand like "adding a second half of its brain." He wants for us to build a plugin to manage these symlinks with CRUD operations from within Obsidian — no terminal needed.
+GlassVault uses Obsidian as the visual layer for its multi-vault system. The idea started when a symlink from the global Obsidian vault to a project's `memory/` folder made the graph view expand like "adding a second half of its brain." This plugin manages those symlinks with CRUD operations from within Obsidian — no terminal needed.
 
-This also serves as a prototype for the GlassVault mobile app's graph view with toggleable vault connections. (to learn more about GlassVault, ask Alex - the user.)
+This also serves as a prototype for the GlassVault mobile app's graph view with toggleable vault connections.
 
 ## What We're Building
 
@@ -98,9 +98,9 @@ A level deeper, notes for specifics that matter. Atomic — one topic per note, 
 ### Workflow
 
 1. **Planning agent** reads this PLAN.md, writes notes for Level 2. Pauses.
-2. **Alex reviews** notes and checks context health and note quality. Alex gives the go-ahead to run `vault process --yolo --wikilinks` to connect the atomic notes together.
+2. **Maintainer reviews** notes and checks context health and note quality. Gives the go-ahead to run `vault process --yolo --wikilinks` to connect the atomic notes together.
 3. **Build agent** reads the notes that were just created, and builds Phase 1. Pauses.
-4. **Alex reviews** the build, and notes, wikilinks the notes, gives go-ahead for Phase 2.
+4. **Maintainer reviews** the build, and notes, wikilinks the notes, gives go-ahead for Phase 2.
 5. Repeat until done.
 
 If context compacts or a fresh agent is needed at any point, the notes should be made to be sufficient enough to pass off the work. A new agent the vault-queries their way into the project and continues with the work seamlessly.
