@@ -58,7 +58,7 @@ On startup, the plugin validates all managed symlinks and silently repairs or re
 
 ### Manual installation
 
-1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/awmusicstudio/obsidian-symlink-plugin/releases/latest)
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/glassvault-ai/obsidian-symlink-manager/releases/latest)
 2. Create a folder at `<your-vault>/.obsidian/plugins/symlink-manager/`
 3. Copy the downloaded files into that folder
 4. Restart Obsidian and enable the plugin in Settings > Community plugins

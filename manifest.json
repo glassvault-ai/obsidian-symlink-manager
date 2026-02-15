@@ -5,5 +5,6 @@
 	"minAppVersion": "0.15.0",
 	"description": "Manage folder symlinks with CRUD operations — link external folders into your vault, toggle them on/off, and manage connections from settings.",
 	"author": "GlassVault",
+	"authorUrl": "https://github.com/glassvault-ai",
 	"isDesktopOnly": true
 }
