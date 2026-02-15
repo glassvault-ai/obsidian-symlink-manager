@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-1536-b60c5fe2
 type: lesson
-status: active
+status: resolved
 tags:
 - code-review
 - symlink-plugin
