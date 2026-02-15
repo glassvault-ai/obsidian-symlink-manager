@@ -8,12 +8,14 @@ import {
 	toggleSymlink,
 	validateEntry,
 } from "./symlink-manager";
+import { SymlinkManagerSettingTab } from "./settings";
 
 export default class SymlinkManagerPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS;
 
 	async onload(): Promise<void> {
 		await this.loadSettings();
+		this.addSettingTab(new SymlinkManagerSettingTab(this.app, this));
 		this.validateSymlinksOnLoad();
 	}
 
@@ -84,6 +86,33 @@ export default class SymlinkManagerPlugin extends Plugin {
 		if (anyChanged) {
 			this.saveSettings();
 		}
+	}
+
+	// --- Create flow (folder picker → vault location → create) ---
+
+	async createSymlinkFromPicker(): Promise<void> {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const { remote } = require("electron");
+		const result = await remote.dialog.showOpenDialog({
+			title: "Select external folder to link",
+			properties: ["openDirectory"],
+		});
+
+		if (result.canceled || result.filePaths.length === 0) return;
+
+		const sourcePath = result.filePaths[0] as string;
+		const sourceName = require("path").basename(sourcePath) as string;
+
+		// For now, place symlink at vault root. Phase 3 adds vault folder picker modal.
+		const entry: SymlinkEntry = {
+			id: crypto.randomUUID(),
+			name: sourceName,
+			sourcePath,
+			vaultPath: "",
+			active: false,
+		};
+
+		await this.addSymlink(entry);
 	}
 
 	// --- Public CRUD API (used by settings tab, commands, modals in later phases) ---
