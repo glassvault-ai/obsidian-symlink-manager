@@ -84,26 +84,26 @@ interface PluginSettings {
 
 ## Build Method: Fractal Decomposition
 
-This build uses the fractal decomposition method (see vault note). Notes carry the WHAT and WHY. Agents figure out the HOW. Three levels:
+This build uses the fractal decomposition method (read docs/fractal-decomposition.md). Notes should be written to carry the WHAT and WHY. Agents figure out the HOW. Three levels:
 
 ### Level 1: This document (PLAN.md)
-The full picture. You're reading it. Covers vision, scope, features, tech stack, and build phases.
+The full picture. You're reading it now. Covers vision, scope, features, tech stack, and build phases.
 
-### Level 2: System notes (built by planning agent)
-One atomic vault note per build area. Covers: dependency order between components, which Obsidian APIs to use and why, safety boundaries, platform considerations. General enough to orient any fresh agent, specific enough to scope the work. Wikilinked to each other.
+### Level 2: System notes
+Atomic vault notes based on build area. Covers: dependency order between components, which Obsidian APIs to use and why, safety boundaries, platform considerations. General enough to orient any fresh agent, specific enough to scope the work. After creation these notes will be wikilinked to each other, to aid `vault query` searches in the next phase.
 
-### Level 3: Implementation notes (built by planning agent)
-One atomic vault note per component. The WHAT and WHY for each piece: what it does, why it exists, what it connects to, what constraints apply. No code. No function signatures. The implementing agent reads these and knows exactly what to build without asking product questions. Engineering decisions (naming, patterns, structure) belong to the implementing agent.
+### Level 3: Implementation notes
+A level deeper, notes for specifics that matter. Notes should be atomic and effective enough that any agent to jump into this project and get to work easily. The WHAT and WHY for each piece: what it does, why it exists, what it connects to, what constraints apply. No need for verbose code snippets, but short snippets are ok. No function signatures. The implementing agent reads these and knows exactly what to build without asking product questions. Engineering decisions (naming, patterns, structure) belong to the implementing agent who will be using these notes to build.
 
 ### Workflow
 
-1. **Planning agent** reads this PLAN.md, writes Level 2 + Level 3 notes. Pauses.
-2. **Alex reviews** notes and checks context health.
-3. **Build agent** (same or fresh) reads the notes and builds Phase 1. Pauses.
-4. **Alex reviews** the build, gives go-ahead for Phase 2.
+1. **Planning agent** reads this PLAN.md, writes notes for Level 2. Pauses.
+2. **Alex reviews** notes and checks context health and note quality. Alex gives the go-ahead to run `vault process --yolo --wikilinks` to connect the atomic notes together.
+3. **Build agent** reads the notes that were just created, and builds Phase 1. Pauses.
+4. **Alex reviews** the build, and notes, wikilinks the notes, gives go-ahead for Phase 2.
 5. Repeat until done.
 
-If context compacts or a fresh agent is needed at any point, the notes are self-contained. A new agent vault-queries the plan notes and picks up seamlessly.
+If context compacts or a fresh agent is needed at any point, the notes should be made to be sufficient enough to pass off the work. A new agent the vault-queries their way into the project and continues with the work seamlessly.
 
 ---
 
@@ -173,7 +173,6 @@ cd ~/code/obsidian-symlink-plugin && npm run dev
 
 ## Future Enhancements (Not v1)
 
-- GlassVault config integration (read `.vault/config.yaml` for known project vaults)
 - Drag-and-drop folder onto Obsidian to create symlink
 - Graph view coloring (different colors for symlinked folders)
 - Status bar showing connected vault count
