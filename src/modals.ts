@@ -35,9 +35,13 @@ export class VaultFolderModal extends FuzzySuggestModal<TFolder> {
 	}
 
 	onClose(): void {
-		if (!this.picked) {
-			this.onSelect(null);
-		}
+		// Defer: onClose can fire before onChooseItem in Obsidian's modal lifecycle.
+		// setTimeout ensures onChooseItem sets picked=true before we check.
+		setTimeout(() => {
+			if (!this.picked) {
+				this.onSelect(null);
+			}
+		}, 0);
 	}
 }
 
@@ -86,9 +90,11 @@ export class ToggleSymlinkModal extends FuzzySuggestModal<SymlinkEntry> {
 	}
 
 	onClose(): void {
-		if (!this.picked) {
-			this.onSelect(null);
-		}
+		setTimeout(() => {
+			if (!this.picked) {
+				this.onSelect(null);
+			}
+		}, 0);
 	}
 }
 
