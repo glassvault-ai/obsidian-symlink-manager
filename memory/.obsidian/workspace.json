@@ -179,6 +179,15 @@
   },
   "active": "af45dbb7925a3cf5",
   "lastOpenFiles": [
+    "modals.ts File Structure for Phase 3.md",
+    "Phase 3 Modifies main.ts createSymlinkFromPicker.md",
+    "FuzzySuggestModal Callback Pattern.md",
+    "Ribbon Icon Wiring.md",
+    "Four Commands to Register in Phase 3.md",
+    "Toggle Symlink Command needs FuzzySuggestModal.md",
+    "Vault Folder Picker Modal Implementation.md",
+    "Phase 2 createSymlinkFromPicker needs vault folder picker.md",
+    "Phase 1 Source Code Structure.md",
     "Why Desktop Only Mobile Cannot Symlink.md",
     "Core Engine Module Separation.md",
     "Handling Deleted Source Folders Gracefully.md",
@@ -195,13 +204,6 @@
     "Electron Dialog for Source Folder Selection.md",
     "On-Load Validation of Symlinks.md",
     "Symlink Toggle Semantics.md",
-    "Symlink Safety Overwrite Protection.md",
-    "Symlink Safety Loop Prevention.md",
-    "Symlink Safety Never Delete the Source Folder.md",
-    "data.json Persistence via Obsidian API.md",
-    "Memory folder is committed to repo.md",
-    "Platform Detection Symlinks vs Windows Junctions.md",
-    "Node.js fs Module Availability in Obsidian Desktop.md",
-    "Obsidian Plugin Lifecycle and Symlink Implications.md"
+    "Symlink Safety Overwrite Protection.md"
   ]
 }
