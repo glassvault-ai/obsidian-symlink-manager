@@ -13,3 +13,7 @@ created_by: ai-agent
 ---
 
 The settings tab name field initially used onChange (fires every keystroke) for rename validation. This made it impossible to clear the field to type a new name — selecting all and deleting triggered the 'invalid name' error immediately and reverted. Fix: switched to an addEventListener('blur') on the input element instead. This lets the user freely edit the text, and validation only runs when they click/tab out of the field. If the field is empty on blur, it reverts with a Notice. This pattern applies to any Obsidian Setting text input where you need deferred validation.
+
+Related:
+[[Name Editing in Settings Tab]]
+[[FuzzySuggestModal onClose fires before onChooseItem]]

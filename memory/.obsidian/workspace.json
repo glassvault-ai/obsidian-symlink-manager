@@ -179,6 +179,7 @@
   },
   "active": "af45dbb7925a3cf5",
   "lastOpenFiles": [
+    "Symlink Manager Plugin v1 Complete.md",
     "existsSync follows symlinks — use lstatSync for broken symlink detection.md",
     "Clean up broken symlinks on deactivation.md",
     "Settings tab must refresh after create flow.md",
@@ -203,7 +204,6 @@
     "Why Desktop Only Mobile Cannot Symlink.md",
     "Core Engine Module Separation.md",
     "Handling Deleted Source Folders Gracefully.md",
-    "Obsidian Notice API for User Feedback.md",
-    "esbuild Config for Obsidian Plugins.md"
+    "Obsidian Notice API for User Feedback.md"
   ]
 }

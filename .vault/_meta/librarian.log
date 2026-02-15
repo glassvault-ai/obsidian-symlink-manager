@@ -79,3 +79,14 @@
 2026-02-14 20:52:03  INFO   add_wikilinks: Name Editing in Settings Tab.md — Added 3 wikilinks: ['Obsidian PluginSettingTab Pattern', 'Vault Root Path Access', 'Symlink Safety Loop Prevention']
 2026-02-14 20:52:03  INFO   Tidying complete: 3 notes modified, 7 wikilinks added
 2026-02-14 20:52:04  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
+2026-02-14 21:42:57  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260215-034257) ===
+2026-02-14 21:42:57  INFO   Processing 46 notes for tidying
+2026-02-14 21:42:57  INFO   Detecting near-duplicate tags...
+2026-02-14 21:43:00  INFO   add_wikilinks: Clean up broken symlinks on deactivation.md — Added 2 wikilinks: ['On-Load Validation of Symlinks', 'Symlink Safety Overwrite Protection']
+2026-02-14 21:43:01  INFO   add_wikilinks: Duplicate detection checks sourcePath only.md — Added 3 wikilinks: ['On-Load Validation of Symlinks', 'Vault Root Path Access', 'FuzzySuggestModal for Vault Path Selection']
+2026-02-14 21:43:01  INFO   add_wikilinks: Name editing uses blur not onChange.md — Added 2 wikilinks: ['Name Editing in Settings Tab', 'FuzzySuggestModal onClose fires before onChooseItem']
+2026-02-14 21:43:02  INFO   add_wikilinks: Settings tab must refresh after create flow.md — Added 3 wikilinks: ['Obsidian PluginSettingTab Pattern', 'Phase 3 Modifies main.ts createSymlinkFromPicker', 'data.json Persistence via Obsidian API']
+2026-02-14 21:43:02  INFO   add_wikilinks: Symlink Manager Plugin v1 Complete.md — Added 3 wikilinks: ['Obsidian Symlink Plugin — Project Overview', 'The Create Symlink Flow', 'Delete Confirmation Before Removing Symlink']
+2026-02-14 21:43:03  INFO   add_wikilinks: existsSync follows symlinks — use lstatSync for broken symlink detection.md — Added 2 wikilinks: ['Clean up broken symlinks on deactivation', 'Symlink vs Directory Detection with lstatSync']
+2026-02-14 21:43:03  INFO   Tidying complete: 6 notes modified, 15 wikilinks added
+2026-02-14 21:43:04  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
