@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-14a0f6cc
 type: decision
-status: active
+status: implemented
 tags:
 - symlink
 - toggle

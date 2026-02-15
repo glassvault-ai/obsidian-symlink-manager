@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0127-0d270223
 type: decision
-status: active
+status: implemented
 tags:
 - safety
 - resilience

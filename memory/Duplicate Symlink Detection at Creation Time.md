@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0251-fd8d29e3
 type: decision
-status: active
+status: implemented
 tags:
 - phase-4
 - duplicate-detection

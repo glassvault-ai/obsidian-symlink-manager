@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-606c4f22
 type: decision
-status: active
+status: implemented
 tags:
 - safety
 - symlink

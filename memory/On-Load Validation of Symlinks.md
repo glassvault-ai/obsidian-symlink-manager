@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-2ebbe89c
 type: decision
-status: active
+status: implemented
 tags:
 - validation
 - startup

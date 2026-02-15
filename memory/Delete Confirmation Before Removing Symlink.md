@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0251-20664c41
 type: decision
-status: active
+status: implemented
 tags:
 - phase-4
 - delete-confirmation

@@ -95,3 +95,16 @@
 2026-02-15 09:46:40  INFO   Detecting near-duplicate tags...
 2026-02-15 09:46:40  INFO   Tidying complete: no changes
 2026-02-15 09:46:43  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
+2026-02-15 11:14:32  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260215-171432) ===
+2026-02-15 11:14:32  INFO   Processing 54 notes for tidying
+2026-02-15 11:14:32  INFO   Detecting near-duplicate tags...
+2026-02-15 11:14:35  INFO   add_wikilinks: Nested .obsidian folders need glob pattern in gitignore.md — Added 3 wikilinks: ['Memory folder is committed to repo', 'Symlink Safety Loop Prevention', 'On-Load Validation of Symlinks']
+2026-02-15 11:14:35  INFO   add_wikilinks: Obsidian community plugin release requirements.md — Added 2 wikilinks: ['Obsidian Plugin Lifecycle and Symlink Implications', 'Nested .obsidian folders need glob pattern in gitignore']
+2026-02-15 11:14:36  INFO   add_wikilinks: Review fixes implemented from code review.md — Added 3 wikilinks: ['Rename Rollback Integrity', 'Delete Inactive Orphan Risk', 'Toggle Path Normalization Edge Case']
+2026-02-15 11:14:36  INFO   Tidying complete: 3 notes modified, 8 wikilinks added
+2026-02-15 11:14:38  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
+2026-02-15 11:18:18  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260215-171818) ===
+2026-02-15 11:18:18  INFO   Processing 55 notes for tidying
+2026-02-15 11:18:18  INFO   Detecting near-duplicate tags...
+2026-02-15 11:18:21  INFO   Tidying complete: no changes
+2026-02-15 11:18:23  INFO   === Run complete: processed=0, skipped=0, errors=0 ===

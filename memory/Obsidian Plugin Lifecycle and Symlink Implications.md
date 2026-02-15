@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0124-5a470511
 type: decision
-status: active
+status: implemented
 tags:
 - obsidian
 - plugin-lifecycle

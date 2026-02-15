@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0127-bcf8eebc
 type: decision
-status: active
+status: implemented
 tags:
 - architecture
 - separation-of-concerns

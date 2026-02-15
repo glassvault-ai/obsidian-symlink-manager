@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0127-8fb3b298
 type: decision
-status: active
+status: implemented
 tags:
 - desktop-only
 - mobile

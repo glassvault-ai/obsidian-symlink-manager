@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0251-7d90c740
 type: decision
-status: active
+status: implemented
 tags:
 - phase-4
 - name-editing
