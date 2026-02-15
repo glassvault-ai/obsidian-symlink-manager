@@ -179,6 +179,9 @@
   },
   "active": "af45dbb7925a3cf5",
   "lastOpenFiles": [
+    "Settings tab must refresh after create flow.md",
+    "Name editing uses blur not onChange.md",
+    "Duplicate detection checks sourcePath only.md",
     "Name Editing in Settings Tab.md",
     "Duplicate Symlink Detection at Creation Time.md",
     "Delete Confirmation Before Removing Symlink.md",
@@ -201,9 +204,6 @@
     "Obsidian Notice API for User Feedback.md",
     "esbuild Config for Obsidian Plugins.md",
     "Ribbon Icon for Quick Access.md",
-    "Unique ID Generation for SymlinkEntry.md",
-    "Vault Root Path Access.md",
-    "Symlink vs Directory Detection with lstatSync.md",
-    "Command Registration and Routing.md"
+    "Unique ID Generation for SymlinkEntry.md"
   ]
 }
