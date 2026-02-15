@@ -6,8 +6,6 @@
 
 GlassVault uses Obsidian as the visual layer for its multi-vault system. The idea started when a symlink from the global Obsidian vault to a project's `memory/` folder made the graph view expand like "adding a second half of its brain." This plugin manages those symlinks with CRUD operations from within Obsidian — no terminal needed.
 
-This also serves as a prototype for the GlassVault mobile app's graph view with toggleable vault connections.
-
 ## What We're Building
 
 An Obsidian community plugin that manages folder symlinks. Desktop only (symlinks require Node.js `fs` module).
