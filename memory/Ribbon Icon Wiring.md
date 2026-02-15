@@ -13,3 +13,7 @@ created_by: ai-agent
 ---
 
 The ribbon icon is registered via this.addRibbonIcon() in onload(). It triggers the same action as the 'link-external-folder' command — opens the create symlink flow. Use the 'link' Lucide icon (Obsidian ships Lucide). The tooltip should say 'Link external folder'. The ribbon click callback is simply: () => this.createSymlinkFromPicker(). This is pure convenience — same action as Cmd+P → 'Symlink Manager: Link external folder'.
+
+Related:
+[[Four Commands to Register in Phase 3]]
+[[The Create Symlink Flow]]

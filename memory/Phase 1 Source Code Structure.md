@@ -12,3 +12,8 @@ created_by: ai-agent
 ---
 
 src/types.ts — SymlinkEntry, PluginSettings interfaces, DEFAULT_SETTINGS. src/symlink-manager.ts — pure fs CRUD logic: validateCreate, createSymlink, removeSymlink, toggleSymlink, validateEntry. No Obsidian imports. Takes vaultBasePath as param. src/main.ts — SymlinkManagerPlugin extends Plugin. onload loads settings and validates existing symlinks. onunload is intentionally empty (symlinks persist). Public API: addSymlink, removeSymlinkEntry, toggleSymlinkEntry, toggleAll — these are the methods the settings tab, commands, and modals will call in Phases 2+3. All user feedback goes through new Notice(). The removeSymlink function in symlink-manager.ts checks isSymbolicLink() before unlinkSync — it will refuse to remove a real directory.
+
+Related:
+[[Obsidian Symlink Plugin — Project Overview]]
+[[Vault Root Path Access]]
+[[Core Engine Module Separation]]
