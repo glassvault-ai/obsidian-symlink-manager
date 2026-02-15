@@ -144,6 +144,13 @@ export default class SymlinkManagerPlugin extends Plugin {
 		const sourcePath = result.filePaths[0] as string;
 		const sourceName = require("path").basename(sourcePath) as string;
 
+		// Early duplicate check before opening vault picker
+		const existing = this.settings.symlinks.find((e) => e.sourcePath === sourcePath);
+		if (existing) {
+			new Notice(`Symlink Manager: This folder is already linked as "${existing.name}"`);
+			return;
+		}
+
 		// Step 2: Vault folder picker for destination
 		const folder = await pickVaultFolder(this.app);
 		if (folder === null) return;
@@ -162,6 +169,15 @@ export default class SymlinkManagerPlugin extends Plugin {
 	// --- Public CRUD API (used by settings tab, commands, modals in later phases) ---
 
 	async addSymlink(entry: SymlinkEntry): Promise<boolean> {
+		// Duplicate detection: same source folder can't be linked twice
+		const duplicate = this.settings.symlinks.find(
+			(e) => e.sourcePath === entry.sourcePath,
+		);
+		if (duplicate) {
+			new Notice(`Symlink Manager: This folder is already linked as "${duplicate.name}"`);
+			return false;
+		}
+
 		const basePath = this.getVaultBasePath();
 		const params = {
 			sourcePath: entry.sourcePath,
@@ -225,6 +241,73 @@ export default class SymlinkManagerPlugin extends Plugin {
 		entry.active = active;
 		await this.saveSettings();
 		new Notice(`Symlink Manager: ${entry.name} ${active ? "activated" : "deactivated"}`);
+		return true;
+	}
+
+	async renameSymlinkEntry(id: string, newName: string): Promise<boolean> {
+		const trimmed = newName.trim();
+		if (trimmed === "" || trimmed.includes("/") || trimmed.includes("\\")) {
+			new Notice("Symlink Manager: Invalid name");
+			return false;
+		}
+
+		const entry = this.settings.symlinks.find((e) => e.id === id);
+		if (!entry) return false;
+		if (entry.name === trimmed) return true;
+
+		// Check for name conflict at the same vault location
+		const conflict = this.settings.symlinks.find(
+			(e) => e.id !== id && e.vaultPath === entry.vaultPath && e.name === trimmed,
+		);
+		if (conflict) {
+			new Notice("Symlink Manager: A symlink with that name already exists at this location");
+			return false;
+		}
+
+		const basePath = this.getVaultBasePath();
+		const wasActive = entry.active;
+
+		// Remove old symlink if active
+		if (wasActive) {
+			const result = removeSymlink(basePath, entry);
+			if (!result.success) {
+				new Notice(`Symlink Manager: ${result.message}`);
+				return false;
+			}
+		}
+
+		const oldName = entry.name;
+		entry.name = trimmed;
+
+		// Recreate at new path if was active
+		if (wasActive) {
+			const params = {
+				sourcePath: entry.sourcePath,
+				vaultBasePath: basePath,
+				vaultPath: entry.vaultPath,
+				name: trimmed,
+			};
+			const validation = validateCreate(params);
+			if (validation.success) {
+				const result = createSymlink(params);
+				if (!result.success) {
+					// Revert name, try to restore old symlink
+					entry.name = oldName;
+					const restoreParams = { ...params, name: oldName };
+					createSymlink(restoreParams);
+					new Notice(`Symlink Manager: Rename failed — ${result.message}`);
+					return false;
+				}
+			} else {
+				entry.name = oldName;
+				const restoreParams = { ...params, name: oldName };
+				createSymlink(restoreParams);
+				new Notice(`Symlink Manager: Rename failed — ${validation.message}`);
+				return false;
+			}
+		}
+
+		await this.saveSettings();
 		return true;
 	}
 

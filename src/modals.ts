@@ -1,4 +1,4 @@
-import { App, FuzzySuggestModal, TFolder } from "obsidian";
+import { App, FuzzySuggestModal, Modal, Setting, TFolder } from "obsidian";
 import type { SymlinkEntry } from "./types";
 
 /**
@@ -108,5 +108,55 @@ export function pickSymlinkToToggle(
 ): Promise<SymlinkEntry | null> {
 	return new Promise((resolve) => {
 		new ToggleSymlinkModal(app, symlinks, resolve).open();
+	});
+}
+
+/**
+ * Confirmation modal before deleting a symlink.
+ */
+class ConfirmDeleteModal extends Modal {
+	private entryName: string;
+	private onConfirm: (confirmed: boolean) => void;
+	private confirmed = false;
+
+	constructor(app: App, entryName: string, onConfirm: (confirmed: boolean) => void) {
+		super(app);
+		this.entryName = entryName;
+		this.onConfirm = onConfirm;
+	}
+
+	onOpen(): void {
+		const { contentEl } = this;
+		contentEl.createEl("h3", { text: "Remove symlink?" });
+		contentEl.createEl("p", {
+			text: `This will remove "${this.entryName}" from your managed symlinks and unlink it from the vault.`,
+		});
+
+		new Setting(contentEl)
+			.addButton((btn) =>
+				btn.setButtonText("Cancel").onClick(() => this.close()),
+			)
+			.addButton((btn) =>
+				btn
+					.setButtonText("Remove")
+					.setWarning()
+					.onClick(() => {
+						this.confirmed = true;
+						this.close();
+					}),
+			);
+	}
+
+	onClose(): void {
+		this.onConfirm(this.confirmed);
+	}
+}
+
+/**
+ * Show a delete confirmation modal. Returns true if user confirms.
+ */
+export function confirmDelete(app: App, entryName: string): Promise<boolean> {
+	return new Promise((resolve) => {
+		new ConfirmDeleteModal(app, entryName, resolve).open();
 	});
 }

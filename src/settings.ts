@@ -1,6 +1,7 @@
-import { PluginSettingTab, Setting, App } from "obsidian";
+import { Notice, PluginSettingTab, Setting, App } from "obsidian";
 import type SymlinkManagerPlugin from "./main";
 import { validateEntry } from "./symlink-manager";
+import { confirmDelete } from "./modals";
 
 export class SymlinkManagerSettingTab extends PluginSettingTab {
 	plugin: SymlinkManagerPlugin;
@@ -24,8 +25,9 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 				btn
 					.setButtonText("Add")
 					.setCta()
-					.onClick(() => {
-						this.plugin.createSymlinkFromPicker();
+					.onClick(async () => {
+						await this.plugin.createSymlinkFromPicker();
+						this.display();
 					}),
 			);
 
@@ -50,8 +52,29 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 					: "";
 
 			const setting = new Setting(containerEl)
-				.setName(entry.name + statusWarning)
-				.setDesc(`${entry.sourcePath} → ${entry.vaultPath}/`);
+				.setDesc(`${entry.sourcePath} → ${entry.vaultPath || "/"}`);
+
+			// Editable name field — validates on blur, not on every keystroke
+			setting.addText((text) => {
+				text.setValue(entry.name).setPlaceholder("Symlink name");
+				text.inputEl.addEventListener("blur", async () => {
+					const value = text.getValue();
+					if (value === entry.name) return;
+					if (value.trim() === "") {
+						text.setValue(entry.name);
+						new Notice("Symlink Manager: Name can't be empty");
+						return;
+					}
+					const success = await this.plugin.renameSymlinkEntry(entry.id, value);
+					if (!success) {
+						text.setValue(entry.name);
+					}
+				});
+			});
+
+			if (statusWarning) {
+				setting.nameEl.createSpan({ text: statusWarning, cls: "mod-warning" });
+			}
 
 			// Toggle switch
 			setting.addToggle((toggle) =>
@@ -61,12 +84,14 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 				}),
 			);
 
-			// Delete button
+			// Delete button with confirmation
 			setting.addExtraButton((btn) =>
 				btn
 					.setIcon("trash")
 					.setTooltip("Remove symlink")
 					.onClick(async () => {
+						const confirmed = await confirmDelete(this.app, entry.name);
+						if (!confirmed) return;
 						await this.plugin.removeSymlinkEntry(entry.id);
 						this.display();
 					}),
