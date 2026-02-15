@@ -1,6 +1,6 @@
 {
-	"id": "symlink-manager",
-	"name": "Symlink Manager",
+	"id": "symlink-plugin",
+	"name": "Symlink Plugin",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Manage folder symlinks with CRUD operations — link external folders into your vault, toggle them on/off, and manage connections from settings.",

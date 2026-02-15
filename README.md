@@ -1,4 +1,4 @@
-# Symlink Manager
+# Symlink Plugin
 
 An Obsidian plugin that lets you link external folders into your vault using symlinks. Linked folders are fully integrated — files show up in search, graph view, and the file explorer, and are fully editable just like any other vault file. Manage connections from settings, toggle them on/off, and seamlessly bring outside projects into your workflow.
 
@@ -25,7 +25,7 @@ An Obsidian plugin that lets you link external folders into your vault using sym
 
 ### Managing symlinks
 
-Open **Settings > Symlink Manager** to see all managed symlinks. From there you can:
+Open **Settings > Symlink Plugin** to see all managed symlinks. From there you can:
 
 - **Toggle** — flip the switch to activate/deactivate
 - **Rename** — click the name field, type a new name, click away to save
@@ -53,13 +53,13 @@ On startup, the plugin validates all managed symlinks and silently repairs or re
 ### From Obsidian Community Plugins
 
 1. Open **Settings > Community plugins**
-2. Search for **Symlink Manager**
+2. Search for **Symlink Plugin**
 3. Click **Install**, then **Enable**
 
 ### Manual installation
 
-1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/glassvault-ai/obsidian-symlink-manager/releases/latest)
-2. Create a folder at `<your-vault>/.obsidian/plugins/symlink-manager/`
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/glassvault-ai/obsidian-symlink-plugin/releases/latest)
+2. Create a folder at `<your-vault>/.obsidian/plugins/symlink-plugin/`
 3. Copy the downloaded files into that folder
 4. Restart Obsidian and enable the plugin in Settings > Community plugins
 

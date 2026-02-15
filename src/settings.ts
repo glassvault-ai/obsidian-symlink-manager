@@ -15,7 +15,7 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Symlink Manager" });
+		containerEl.createEl("h2", { text: "Symlink Plugin" });
 
 		// Add new symlink button
 		new Setting(containerEl)
@@ -62,7 +62,7 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 					if (value === entry.name) return;
 					if (value.trim() === "") {
 						text.setValue(entry.name);
-						new Notice("Symlink Manager: Name can't be empty");
+						new Notice("Symlink Plugin: Name can't be empty");
 						return;
 					}
 					const success = await this.plugin.renameSymlinkEntry(entry.id, value);
