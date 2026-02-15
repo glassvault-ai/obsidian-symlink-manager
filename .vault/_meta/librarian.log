@@ -4,3 +4,42 @@
 2026-02-14 17:16:29  INFO   add_wikilinks: Obsidian Symlink Plugin — Project Overview.md — Added 1 wikilinks: ['Symlink Plugin Build Phases']
 2026-02-14 17:16:30  INFO   Tidying complete: 1 notes modified, 1 wikilinks added
 2026-02-14 17:16:30  INFO   === Run complete: processed=0, skipped=0, errors=0 ===
+2026-02-14 19:30:32  INFO   === Librarian process started [wikilinks=True, yolo=True] (run: 20260215-013032) ===
+2026-02-14 19:30:32  INFO   Processing 27 notes for tidying
+2026-02-14 19:30:32  INFO   Detecting near-duplicate tags...
+2026-02-14 19:30:32  INFO   consolidate_tags: On-Load Validation of Symlinks.md — Consolidated: ['validation', 'startup', 'symlinks', 'resilience'] -> ['validation', 'startup', 'symlink', 'resilience']
+2026-02-14 19:30:32  INFO   consolidate_tags: Platform Detection Symlinks vs Windows Junctions.md — Consolidated: ['platform', 'windows', 'symlinks', 'junctions'] -> ['platform', 'windows', 'symlink', 'junctions']
+2026-02-14 19:30:32  INFO   consolidate_tags: Symlink Safety Loop Prevention.md — Consolidated: ['safety', 'symlinks', 'loops', 'validation'] -> ['safety', 'symlink', 'loops', 'validation']
+2026-02-14 19:30:32  INFO   consolidate_tags: Symlink Safety Never Delete the Source Folder.md — Consolidated: ['safety', 'symlinks', 'fs', 'critical'] -> ['safety', 'symlink', 'fs', 'critical']
+2026-02-14 19:30:32  INFO   consolidate_tags: Symlink Safety Overwrite Protection.md — Consolidated: ['safety', 'symlinks', 'overwrite', 'validation'] -> ['safety', 'symlink', 'overwrite', 'validation']
+2026-02-14 19:30:32  INFO   consolidate_tags: Symlink Toggle Semantics.md — Consolidated: ['symlinks', 'toggle', 'ux', 'architecture'] -> ['symlink', 'toggle', 'ux', 'architecture']
+2026-02-14 19:30:32  INFO   consolidate_tags: Symlink vs Directory Detection with lstatSync.md — Consolidated: ['node-fs', 'symlinks', 'lstat', 'technical'] -> ['node-fs', 'symlink', 'lstat', 'technical']
+2026-02-14 19:30:32  INFO   Consolidated 7 tag uses
+2026-02-14 19:30:35  INFO   add_wikilinks: Command Registration and Routing.md — Added 3 wikilinks: ['Core Engine Module Separation', 'Obsidian Plugin Lifecycle and Symlink Implications', 'The Create Symlink Flow']
+2026-02-14 19:30:36  INFO   add_wikilinks: Core Engine Module Separation.md — Added 2 wikilinks: ['Obsidian Symlink Plugin — Project Overview', 'The Create Symlink Flow']
+2026-02-14 19:30:37  INFO   add_wikilinks: Electron Dialog for Source Folder Selection.md — Added 2 wikilinks: ['FuzzySuggestModal for Vault Path Selection', 'Vault Root Path Access']
+2026-02-14 19:30:37  INFO   add_wikilinks: Fractal Decomposition Method.md — Added 2 wikilinks: ['Symlink Plugin Build Phases', 'Obsidian Symlink Plugin — Project Overview']
+2026-02-14 19:30:38  INFO   add_wikilinks: FuzzySuggestModal for Vault Path Selection.md — Added 3 wikilinks: ['The Create Symlink Flow', 'Vault Root Path Access', 'Obsidian Symlink Plugin — Project Overview']
+2026-02-14 19:30:38  INFO   add_wikilinks: Handling Deleted Source Folders Gracefully.md — Added 2 wikilinks: ['Symlink Safety Never Delete the Source Folder', 'Symlink Safety Overwrite Protection']
+2026-02-14 19:30:39  INFO   add_wikilinks: Memory folder is committed to repo.md — Added 3 wikilinks: ['Obsidian Symlink Plugin — Project Overview', 'On-Load Validation of Symlinks', 'Symlink Safety Overwrite Protection']
+2026-02-14 19:30:40  INFO   add_wikilinks: Node.js fs Module Availability in Obsidian Desktop.md — Added 3 wikilinks: ['Why Desktop Only Mobile Cannot Symlink', 'Obsidian Plugin Lifecycle and Symlink Implications', 'Symlink vs Directory Detection with lstatSync']
+2026-02-14 19:30:40  INFO   add_wikilinks: Obsidian Notice API for User Feedback.md — Added 3 wikilinks: ['Obsidian Symlink Plugin — Project Overview', 'On-Load Validation of Symlinks', 'Symlink Safety Loop Prevention']
+2026-02-14 19:30:41  INFO   add_wikilinks: Obsidian Plugin Lifecycle and Symlink Implications.md — Added 3 wikilinks: ['On-Load Validation of Symlinks', 'Command Registration and Routing', 'Ribbon Icon for Quick Access']
+2026-02-14 19:30:41  INFO   add_wikilinks: Obsidian PluginSettingTab Pattern.md — Added 3 wikilinks: ['Obsidian Plugin Lifecycle and Symlink Implications', 'Obsidian Symlink Plugin — Project Overview', 'data.json Persistence via Obsidian API']
+2026-02-14 19:30:42  INFO   add_wikilinks: On-Load Validation of Symlinks.md — Added 3 wikilinks: ['Symlink Safety Overwrite Protection', 'Handling Deleted Source Folders Gracefully', 'Obsidian Plugin Lifecycle and Symlink Implications']
+2026-02-14 19:30:43  INFO   add_wikilinks: Platform Detection Symlinks vs Windows Junctions.md — Added 3 wikilinks: ['Node.js fs Module Availability in Obsidian Desktop', 'Symlink vs Directory Detection with lstatSync', 'The Create Symlink Flow']
+2026-02-14 19:30:44  INFO   add_wikilinks: Ribbon Icon for Quick Access.md — Added 3 wikilinks: ['The Create Symlink Flow', 'Command Registration and Routing', 'Obsidian Plugin Lifecycle and Symlink Implications']
+2026-02-14 19:30:44  INFO   add_wikilinks: Symlink Plugin Build Phases.md — Added 3 wikilinks: ['Core Engine Module Separation', 'Obsidian PluginSettingTab Pattern', 'Command Registration and Routing']
+2026-02-14 19:30:44  INFO   add_wikilinks: Symlink Safety Loop Prevention.md — Added 2 wikilinks: ['Symlink Safety Overwrite Protection', 'On-Load Validation of Symlinks']
+2026-02-14 19:30:45  INFO   add_wikilinks: Symlink Safety Never Delete the Source Folder.md — Added 3 wikilinks: ['Symlink Safety Overwrite Protection', 'Symlink Safety Loop Prevention', 'On-Load Validation of Symlinks']
+2026-02-14 19:30:46  INFO   add_wikilinks: Symlink Safety Overwrite Protection.md — Added 3 wikilinks: ['Symlink vs Directory Detection with lstatSync', 'The Create Symlink Flow', 'Symlink Safety Loop Prevention']
+2026-02-14 19:30:46  INFO   add_wikilinks: Symlink Toggle Semantics.md — Added 3 wikilinks: ['data.json Persistence via Obsidian API', 'Obsidian Plugin Lifecycle and Symlink Implications', 'Obsidian Symlink Plugin — Project Overview']
+2026-02-14 19:30:47  INFO   add_wikilinks: Symlink vs Directory Detection with lstatSync.md — Added 2 wikilinks: ['Symlink Safety Never Delete the Source Folder', 'Platform Detection Symlinks vs Windows Junctions']
+2026-02-14 19:30:48  INFO   add_wikilinks: The Create Symlink Flow.md — Added 3 wikilinks: ['Electron Dialog for Source Folder Selection', 'FuzzySuggestModal for Vault Path Selection', 'Symlink Safety Overwrite Protection']
+2026-02-14 19:30:48  INFO   add_wikilinks: Unique ID Generation for SymlinkEntry.md — Added 3 wikilinks: ['Symlink Toggle Semantics', 'On-Load Validation of Symlinks', 'Symlink vs Directory Detection with lstatSync']
+2026-02-14 19:30:49  INFO   add_wikilinks: Vault Root Path Access.md — Added 2 wikilinks: ['FuzzySuggestModal for Vault Path Selection', 'Obsidian Symlink Plugin — Project Overview']
+2026-02-14 19:30:49  INFO   add_wikilinks: Why Desktop Only Mobile Cannot Symlink.md — Added 3 wikilinks: ['Obsidian Symlink Plugin — Project Overview', 'Symlink vs Directory Detection with lstatSync', 'Platform Detection Symlinks vs Windows Junctions']
+2026-02-14 19:30:50  INFO   add_wikilinks: data.json Persistence via Obsidian API.md — Added 2 wikilinks: ['Obsidian Plugin Lifecycle and Symlink Implications', 'Unique ID Generation for SymlinkEntry']
+2026-02-14 19:30:51  INFO   add_wikilinks: esbuild Config for Obsidian Plugins.md — Added 2 wikilinks: ['Obsidian Plugin Lifecycle and Symlink Implications', 'Symlink Plugin Build Phases']
+2026-02-14 19:30:51  INFO   Tidying complete: 26 notes modified, 7 tags consolidated, 69 wikilinks added
+2026-02-14 19:30:52  INFO   === Run complete: processed=0, skipped=0, errors=0 ===

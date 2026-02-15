@@ -11,14 +11,10 @@
             "id": "af45dbb7925a3cf5",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Memory folder is committed to repo.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Memory folder is committed to repo"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -78,7 +74,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 278.5
+    "width": 278.5,
+    "collapsed": true
   },
   "right": {
     "id": "33864750da865794",
@@ -94,7 +91,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Memory folder is committed to repo.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +100,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Memory folder is committed to repo"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +109,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Memory folder is committed to repo.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Memory folder is committed to repo"
+              "title": "Outgoing links"
             }
           },
           {
@@ -156,13 +151,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Memory folder is committed to repo.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Memory folder is committed to repo"
+              "title": "Outline"
             }
           }
         ]
@@ -185,6 +179,29 @@
   },
   "active": "af45dbb7925a3cf5",
   "lastOpenFiles": [
-    "Memory folder is committed to repo.md"
+    "Why Desktop Only Mobile Cannot Symlink.md",
+    "Core Engine Module Separation.md",
+    "Handling Deleted Source Folders Gracefully.md",
+    "Obsidian Notice API for User Feedback.md",
+    "esbuild Config for Obsidian Plugins.md",
+    "Ribbon Icon for Quick Access.md",
+    "Unique ID Generation for SymlinkEntry.md",
+    "The Create Symlink Flow.md",
+    "Vault Root Path Access.md",
+    "Symlink vs Directory Detection with lstatSync.md",
+    "Command Registration and Routing.md",
+    "Obsidian PluginSettingTab Pattern.md",
+    "FuzzySuggestModal for Vault Path Selection.md",
+    "Electron Dialog for Source Folder Selection.md",
+    "On-Load Validation of Symlinks.md",
+    "Symlink Toggle Semantics.md",
+    "Symlink Safety Overwrite Protection.md",
+    "Symlink Safety Loop Prevention.md",
+    "Symlink Safety Never Delete the Source Folder.md",
+    "data.json Persistence via Obsidian API.md",
+    "Memory folder is committed to repo.md",
+    "Platform Detection Symlinks vs Windows Junctions.md",
+    "Node.js fs Module Availability in Obsidian Desktop.md",
+    "Obsidian Plugin Lifecycle and Symlink Implications.md"
   ]
 }
