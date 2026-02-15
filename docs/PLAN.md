@@ -90,10 +90,10 @@ This build uses the fractal decomposition method (read docs/fractal-decompositio
 The full picture. You're reading it now. Covers vision, scope, features, tech stack, and build phases.
 
 ### Level 2: System notes
-Atomic vault notes based on build area. Covers: dependency order between components, which Obsidian APIs to use and why, safety boundaries, platform considerations. General enough to orient any fresh agent, specific enough to scope the work. After creation these notes will be wikilinked to each other, to aid `vault query` searches in the next phase.
+Atomic vault notes covering the systems and architecture. One note per concept — not one per build area. Write as many as needed: dependency order between components, which Obsidian APIs to use and why, safety boundaries, platform considerations, gotchas, design rationale. The vault handles volume well and semantic search surfaces the right note regardless of count. General enough to orient any fresh agent, specific enough to scope the work. After creation these notes will be wikilinked to each other, to aid `vault query` searches in the next phase.
 
 ### Level 3: Implementation notes
-A level deeper, notes for specifics that matter. Notes should be atomic and effective enough that any agent to jump into this project and get to work easily. The WHAT and WHY for each piece: what it does, why it exists, what it connects to, what constraints apply. No need for verbose code snippets, but short snippets are ok. No function signatures. The implementing agent reads these and knows exactly what to build without asking product questions. Engineering decisions (naming, patterns, structure) belong to the implementing agent who will be using these notes to build.
+A level deeper, notes for specifics that matter. Atomic — one topic per note, as many notes as needed. Effective enough that any agent can jump into this project and get to work. The WHAT and WHY for each piece: what it does, why it exists, what it connects to, what constraints apply. No need for verbose code snippets, but short snippets are ok. No function signatures. The implementing agent reads these and knows exactly what to build without asking product questions. Engineering decisions (naming, patterns, structure) belong to the implementing agent who will be using these notes to build.
 
 ### Workflow
 
