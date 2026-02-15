@@ -11,7 +11,7 @@ created_at: '2026-02-14T23:12:38.485009+00:00'
 created_by: ai-agent
 ---
 
-An Obsidian community plugin that manages folder symlinks with CRUD operations from within Obsidian. Desktop only (requires Node.js fs module). Serves as a prototype for GlassVault mobile app's graph view with toggleable vault connections. Tech stack: TypeScript, esbuild, standard Obsidian plugin APIs. Key insight: symlinking a project's memory/ folder into the global vault expands the graph view like 'adding a second half of its brain.'
+An Obsidian community plugin that manages folder symlinks with CRUD operations from within Obsidian. Desktop only (requires Node.js fs module). Tech stack: TypeScript, esbuild, standard Obsidian plugin APIs. Key insight: symlinking a project's memory/ folder into the global vault expands the graph view like 'adding a second half of its brain.'
 
 Related:
 [[Symlink Plugin Build Phases]]
