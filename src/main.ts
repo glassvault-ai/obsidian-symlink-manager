@@ -36,7 +36,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 			name: "Toggle symlink...",
 			callback: async () => {
 				if (this.settings.symlinks.length === 0) {
-					new Notice("Symlink Plugin: No symlinks to toggle");
+					new Notice("Symlink Manager: No symlinks to toggle");
 					return;
 				}
 				const entry = await pickSymlinkToToggle(this.app, this.settings.symlinks);
@@ -100,7 +100,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 				}
 				toRemove.push(entry.id);
 				anyChanged = true;
-				new Notice(`Symlink Plugin: Source missing for "${entry.name}" — removed`);
+				new Notice(`Symlink Manager: Source missing for "${entry.name}" — removed`);
 				continue;
 			}
 
@@ -118,12 +118,12 @@ export default class SymlinkManagerPlugin extends Plugin {
 					if (!result.success) {
 						entry.active = false;
 						anyChanged = true;
-						new Notice(`Symlink Plugin: Failed to restore "${entry.name}" — ${result.message}`);
+						new Notice(`Symlink Manager: Failed to restore "${entry.name}" — ${result.message}`);
 					}
 				} else {
 					entry.active = false;
 					anyChanged = true;
-					new Notice(`Symlink Plugin: Cannot restore "${entry.name}" — ${validation.message}`);
+					new Notice(`Symlink Manager: Cannot restore "${entry.name}" — ${validation.message}`);
 				}
 			}
 		}
@@ -158,7 +158,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 		// Early duplicate check before opening vault picker
 		const existing = this.settings.symlinks.find((e) => e.sourcePath === sourcePath);
 		if (existing) {
-			new Notice(`Symlink Plugin: This folder is already linked as "${existing.name}"`);
+			new Notice(`Symlink Manager: This folder is already linked as "${existing.name}"`);
 			return;
 		}
 
@@ -185,7 +185,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 			(e) => e.sourcePath === entry.sourcePath,
 		);
 		if (duplicate) {
-			new Notice(`Symlink Plugin: This folder is already linked as "${duplicate.name}"`);
+			new Notice(`Symlink Manager: This folder is already linked as "${duplicate.name}"`);
 			return false;
 		}
 
@@ -199,20 +199,20 @@ export default class SymlinkManagerPlugin extends Plugin {
 
 		const validation = validateCreate(params);
 		if (!validation.success) {
-			new Notice(`Symlink Plugin: ${validation.message}`);
+			new Notice(`Symlink Manager: ${validation.message}`);
 			return false;
 		}
 
 		const result = createSymlink(params);
 		if (!result.success) {
-			new Notice(`Symlink Plugin: ${result.message}`);
+			new Notice(`Symlink Manager: ${result.message}`);
 			return false;
 		}
 
 		entry.active = true;
 		this.settings.symlinks.push(entry);
 		await this.saveSettings();
-		new Notice(`Symlink Plugin: Linked "${entry.name}"`);
+		new Notice(`Symlink Manager: Linked "${entry.name}"`);
 		return true;
 	}
 
@@ -228,13 +228,13 @@ export default class SymlinkManagerPlugin extends Plugin {
 		// Handles metadata drift (e.g. crash during toggle leaving orphaned symlink).
 		const result = removeSymlink(basePath, entry);
 		if (!result.success) {
-			new Notice(`Symlink Plugin: ${result.message}`);
+			new Notice(`Symlink Manager: ${result.message}`);
 			return false;
 		}
 
 		this.settings.symlinks.splice(index, 1);
 		await this.saveSettings();
-		new Notice(`Symlink Plugin: Removed "${entry.name}"`);
+		new Notice(`Symlink Manager: Removed "${entry.name}"`);
 		return true;
 	}
 
@@ -245,20 +245,20 @@ export default class SymlinkManagerPlugin extends Plugin {
 
 		const { result, active } = toggleSymlink(basePath, entry);
 		if (!result.success) {
-			new Notice(`Symlink Plugin: ${result.message}`);
+			new Notice(`Symlink Manager: ${result.message}`);
 			return false;
 		}
 
 		entry.active = active;
 		await this.saveSettings();
-		new Notice(`Symlink Plugin: ${entry.name} ${active ? "activated" : "deactivated"}`);
+		new Notice(`Symlink Manager: ${entry.name} ${active ? "activated" : "deactivated"}`);
 		return true;
 	}
 
 	async renameSymlinkEntry(id: string, newName: string): Promise<boolean> {
 		const trimmed = newName.trim();
 		if (trimmed === "" || trimmed.includes("/") || trimmed.includes("\\")) {
-			new Notice("Symlink Plugin: Invalid name");
+			new Notice("Symlink Manager: Invalid name");
 			return false;
 		}
 
@@ -271,7 +271,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 			(e) => e.id !== id && e.vaultPath === entry.vaultPath && e.name === trimmed,
 		);
 		if (conflict) {
-			new Notice("Symlink Plugin: A symlink with that name already exists at this location");
+			new Notice("Symlink Manager: A symlink with that name already exists at this location");
 			return false;
 		}
 
@@ -282,7 +282,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 		if (wasActive) {
 			const result = removeSymlink(basePath, entry);
 			if (!result.success) {
-				new Notice(`Symlink Plugin: ${result.message}`);
+				new Notice(`Symlink Manager: ${result.message}`);
 				return false;
 			}
 		}
@@ -310,7 +310,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 						entry.active = false;
 						await this.saveSettings();
 					}
-					new Notice(`Symlink Plugin: Rename failed — ${result.message}`);
+					new Notice(`Symlink Manager: Rename failed — ${result.message}`);
 					return false;
 				}
 			} else {
@@ -321,7 +321,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 					entry.active = false;
 					await this.saveSettings();
 				}
-				new Notice(`Symlink Plugin: Rename failed — ${validation.message}`);
+				new Notice(`Symlink Manager: Rename failed — ${validation.message}`);
 				return false;
 			}
 		}
@@ -344,7 +344,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 				succeeded++;
 			} else {
 				failed++;
-				new Notice(`Symlink Plugin: ${entry.name} — ${result.message}`);
+				new Notice(`Symlink Manager: ${entry.name} — ${result.message}`);
 			}
 		}
 
@@ -354,9 +354,9 @@ export default class SymlinkManagerPlugin extends Plugin {
 
 		const action = active ? "activated" : "deactivated";
 		if (failed === 0) {
-			new Notice(`Symlink Plugin: ${succeeded} symlink${succeeded === 1 ? "" : "s"} ${action}`);
+			new Notice(`Symlink Manager: ${succeeded} symlink${succeeded === 1 ? "" : "s"} ${action}`);
 		} else {
-			new Notice(`Symlink Plugin: ${succeeded} ${action}, ${failed} failed`);
+			new Notice(`Symlink Manager: ${succeeded} ${action}, ${failed} failed`);
 		}
 	}
 }

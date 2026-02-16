@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-symlink-plugin",
+	"name": "obsidian-symlink-manager",
 	"version": "1.0.0",
 	"description": "Manage folder symlinks with CRUD operations from within Obsidian",
 	"main": "main.js",
