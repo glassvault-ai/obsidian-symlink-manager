@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-symlink-manager",
-	"version": "1.0.0",
-	"description": "Manage folder symlinks with CRUD operations from within Obsidian",
+	"version": "1.0.1",
+	"description": "Manage folder symlinks — link external folders into your vault, toggle them on/off, and manage connections from settings.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

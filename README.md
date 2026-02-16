@@ -4,6 +4,8 @@ An Obsidian plugin that lets you link external folders into your vault using sym
 
 **Desktop only** — requires filesystem access not available on mobile.
 
+> **Note:** This plugin accesses folders outside your vault to create symlinks pointing into it. No data is collected or transmitted — all operations are local.
+
 ## Features
 
 - **Link external folders** — Pick any folder on your computer and link it into your vault. Files are fully editable in Obsidian — read, write, rename, everything works

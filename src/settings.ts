@@ -15,7 +15,7 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Symlink Manager" });
+		new Setting(containerEl).setName("Symlink Manager").setHeading();
 
 		// Add new symlink button
 		new Setting(containerEl)
@@ -39,7 +39,7 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 			return;
 		}
 
-		containerEl.createEl("h3", { text: "Managed Symlinks" });
+		new Setting(containerEl).setName("Managed symlinks").setHeading();
 
 		const basePath = this.plugin.getVaultBasePath();
 
