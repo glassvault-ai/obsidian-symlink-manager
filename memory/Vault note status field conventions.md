@@ -7,10 +7,14 @@ tags:
 - metadata
 - status
 - workflow
+- summary
 scope: project
 created_at: '2026-02-15T17:17:35.487266+00:00'
 created_by: ai-agent
 ---
+
+## Summary
+The vault note 'status' field tracks current reality using 4-5 lightweight values: 'active', 'outdated' (for facts/lessons), or 'active', 'implemented', 'superseded' (for decisions). Update status when implementing, fixing, refactoring, or replacing decisions, linking to replacements for superseded decisions.
 
 The status field in vault note frontmatter tracks whether a note reflects current reality. Keep it lightweight — only 4-5 values, no complex workflows.
 
