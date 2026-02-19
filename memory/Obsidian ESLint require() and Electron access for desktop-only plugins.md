@@ -1,7 +1,7 @@
 ---
 note_id: 20260219-1906-cd29ef26
 type: fact
-status: active
+status: implemented
 tags:
 - obsidian
 - eslint
