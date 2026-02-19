@@ -42,3 +42,8 @@ When to update status:
 - When replacing a decision, flip the old one to superseded and link the new one
 
 Don't over-maintain. Status is metadata for filtering and context, not a project management system. If a note is still useful when you read it, it's probably fine as-is.
+
+Related:
+[[Symlink Safety Overwrite Protection]]
+[[Clean up broken symlinks on deactivation]]
+[[Duplicate detection checks sourcePath only]]
