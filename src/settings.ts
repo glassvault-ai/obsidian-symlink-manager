@@ -15,8 +15,6 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		new Setting(containerEl).setName("Symlink Manager").setHeading();
-
 		// Add new symlink button
 		new Setting(containerEl)
 			.setName("Add symlink")
@@ -33,7 +31,7 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 
 		if (this.plugin.settings.symlinks.length === 0) {
 			containerEl.createEl("p", {
-				text: "No symlinks yet. Click \"Add\" to link an external folder.",
+				text: "No symlinks configured yet.",
 				cls: "setting-item-description",
 			});
 			return;
@@ -57,18 +55,20 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 			// Editable name field — validates on blur, not on every keystroke
 			setting.addText((text) => {
 				text.setValue(entry.name).setPlaceholder("Symlink name");
-				text.inputEl.addEventListener("blur", async () => {
-					const value = text.getValue();
-					if (value === entry.name) return;
-					if (value.trim() === "") {
-						text.setValue(entry.name);
-						new Notice("Symlink Manager: Name can't be empty");
-						return;
-					}
-					const success = await this.plugin.renameSymlinkEntry(entry.id, value);
-					if (!success) {
-						text.setValue(entry.name);
-					}
+				text.inputEl.addEventListener("blur", () => {
+					void (async () => {
+						const value = text.getValue();
+						if (value === entry.name) return;
+						if (value.trim() === "") {
+							text.setValue(entry.name);
+							new Notice("Name can't be empty");
+							return;
+						}
+						const success = await this.plugin.renameSymlinkEntry(entry.id, value);
+						if (!success) {
+							text.setValue(entry.name);
+						}
+					})();
 				});
 			});
 
