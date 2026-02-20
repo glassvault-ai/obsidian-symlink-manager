@@ -16,6 +16,8 @@ created_by: ai-agent
 ## Summary
 The vault note 'status' field tracks current reality using 4-5 lightweight values: 'active', 'outdated' (for facts/lessons), or 'active', 'implemented', 'superseded' (for decisions). Update status when implementing, fixing, refactoring, or replacing decisions, linking to replacements for superseded decisions.
 
+---
+
 The status field in vault note frontmatter tracks whether a note reflects current reality. Keep it lightweight — only 4-5 values, no complex workflows.
 
 For facts and lessons:

@@ -16,6 +16,8 @@ created_by: ai-agent
 ## Summary
 Use `eslint-plugin-obsidianmd` (v0.1.9) for official Obsidian community plugin ESLint rules. The recommended configuration includes `@typescript-eslint/recommendedTypeChecked` and enforces rules like avoiding forbidden DOM elements, using `requestUrl` over `fetch`, and sentence casing for UI strings.
 
+---
+
 The official ESLint plugin for Obsidian community plugins is **eslint-plugin-obsidianmd** (npm package: eslint-plugin-obsidianmd, v0.1.9 as of Feb 2026). Published by Dynalist Inc. (joethei), source at github.com/obsidianmd/eslint-plugin, mirrored/contributed by mProjectsCode.
 
 ## Installation

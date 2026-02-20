@@ -17,6 +17,8 @@ created_by: ai-agent
 ## Summary
 For Obsidian desktop-only plugins, Node.js module imports are allowed if `manifest.isDesktopOnly` is true, but bare `require()` calls are always an error. Use ES module imports like `import fs from 'fs'` and `import { remote } from '@electron/remote'` to access Electron APIs and Node.js modules, avoiding `require()`.
 
+---
+
 The eslint-plugin-obsidianmd recommended config handles Node.js/Electron access through two layered rules:
 
 ## 1. import/no-nodejs-modules (conditional)

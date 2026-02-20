@@ -16,6 +16,8 @@ created_by: ai-agent
 ## Summary
 The `obsidianmd/ui/sentence-case` ESLint rule inspects specific Obsidian API calls and DOM patterns, like `setName(text)` and `new Notice('text')`, for sentence case compliance. It preserves brand names, acronyms, and camelCase in loose mode, while skipping inline code and file paths.
 
+---
+
 The ui/sentence-case rule in eslint-plugin-obsidianmd inspects these specific Obsidian API calls and DOM patterns for sentence case compliance:
 
 ## METHOD_STRING_ARG_POS map (method name -> argument index)
