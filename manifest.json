@@ -1,7 +1,7 @@
 {
 	"id": "symlink-manager",
 	"name": "Symlink Manager",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "Manage folder symlinks — link external folders into your vault, toggle them on/off, and manage connections from settings.",
 	"author": "GlassVault",
