@@ -224,12 +224,16 @@ export default class SymlinkManagerPlugin extends Plugin {
 		const entry = this.settings.symlinks[index];
 		if (entry === undefined) return false;
 
-		// Always attempt unlink based on filesystem state, not just active flag.
-		// Handles metadata drift (e.g. crash during toggle leaving orphaned symlink).
-		const result = removeSymlink(basePath, entry);
-		if (!result.success) {
-			new Notice(`${result.message}`);
-			return false;
+		// Only attempt filesystem removal if an actual symlink exists on disk.
+		// If the path is a real directory (e.g. stale entry from copied settings),
+		// skip unlink and just remove the entry — the plugin doesn't own real directories.
+		const status = validateEntry(basePath, entry);
+		if (status.symlinkExists) {
+			const result = removeSymlink(basePath, entry);
+			if (!result.success) {
+				new Notice(`${result.message}`);
+				return false;
+			}
 		}
 
 		this.settings.symlinks.splice(index, 1);
