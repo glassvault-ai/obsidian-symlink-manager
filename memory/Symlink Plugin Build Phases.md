@@ -1,7 +1,7 @@
 ---
 note_id: 20260214-2312-712945d2
 type: fact
-status: active
+status: resolved
 tags:
 - obsidian
 - symlink

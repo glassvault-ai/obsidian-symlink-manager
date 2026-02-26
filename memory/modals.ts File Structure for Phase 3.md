@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0142-9f79fcd7
 type: fact
-status: active
+status: implemented
 tags:
 - phase-3
 - modal

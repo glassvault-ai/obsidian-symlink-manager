@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0126-ee7aca51
 type: fact
-status: active
+status: implemented
 tags:
 - obsidian
 - ribbon

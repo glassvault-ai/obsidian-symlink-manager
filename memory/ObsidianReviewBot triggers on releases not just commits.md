@@ -1,7 +1,7 @@
 ---
 note_id: 20260220-2332-7f570737
 type: lesson
-status: active
+status: resolved
 tags:
 - obsidian
 - community-plugin

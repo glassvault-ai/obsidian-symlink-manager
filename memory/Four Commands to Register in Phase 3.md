@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0141-44697ee1
 type: fact
-status: active
+status: implemented
 tags:
 - phase-3
 - commands

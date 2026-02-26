@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0320-38699e0f
 type: lesson
-status: active
+status: resolved
 tags:
 - settings
 - display-refresh

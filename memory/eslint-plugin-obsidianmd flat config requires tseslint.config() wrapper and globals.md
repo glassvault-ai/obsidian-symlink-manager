@@ -1,7 +1,7 @@
 ---
 note_id: 20260219-2015-982a1ca0
 type: lesson
-status: active
+status: implemented
 tags:
 - obsidian
 - eslint

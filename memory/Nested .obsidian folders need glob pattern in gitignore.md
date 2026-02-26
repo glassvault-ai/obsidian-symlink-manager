@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-1714-b48f7ab8
 type: lesson
-status: active
+status: resolved
 tags:
 - git
 - gitignore

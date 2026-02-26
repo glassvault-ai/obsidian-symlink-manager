@@ -1,7 +1,7 @@
 ---
 note_id: 20260219-2022-13e1c8f2
 type: lesson
-status: active
+status: implemented
 tags:
 - obsidian
 - notice

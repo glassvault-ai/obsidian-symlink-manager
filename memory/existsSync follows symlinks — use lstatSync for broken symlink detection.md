@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0334-e4d56d28
 type: lesson
-status: active
+status: implemented
 tags:
 - node-fs
 - symlink

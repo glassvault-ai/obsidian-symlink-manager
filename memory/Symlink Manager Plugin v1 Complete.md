@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0339-8f0fc8a7
 type: fact
-status: active
+status: implemented
 tags:
 - symlink-plugin
 - v1

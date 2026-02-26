@@ -1,7 +1,7 @@
 ---
 note_id: 20260220-0426-428c54e6
 type: lesson
-status: active
+status: resolved
 tags:
 - obsidian
 - symlink

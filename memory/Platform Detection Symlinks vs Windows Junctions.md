@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-cd376226
 type: fact
-status: active
+status: implemented
 tags:
 - platform
 - windows

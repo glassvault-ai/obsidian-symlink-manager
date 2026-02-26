@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-1714-93e154ed
 type: fact
-status: active
+status: implemented
 tags:
 - code-review
 - review-fixes

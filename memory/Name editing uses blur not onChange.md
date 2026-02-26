@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0320-54257632
 type: lesson
-status: active
+status: implemented
 tags:
 - settings
 - ux

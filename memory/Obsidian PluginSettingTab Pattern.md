@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-afc6dfb6
 type: fact
-status: active
+status: implemented
 tags:
 - obsidian
 - settings-tab

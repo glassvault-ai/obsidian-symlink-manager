@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0135-9c078e9b
 type: fact
-status: active
+status: implemented
 tags:
 - source-code
 - architecture

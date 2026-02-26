@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0142-87f8304b
 type: fact
-status: active
+status: implemented
 tags:
 - phase-3
 - ribbon

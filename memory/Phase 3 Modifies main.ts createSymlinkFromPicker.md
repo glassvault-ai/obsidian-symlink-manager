@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0142-8bb38352
 type: fact
-status: active
+status: implemented
 tags:
 - phase-3
 - main-ts

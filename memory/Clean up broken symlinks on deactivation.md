@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0326-be445970
 type: lesson
-status: active
+status: resolved
 tags:
 - validation
 - broken-symlink

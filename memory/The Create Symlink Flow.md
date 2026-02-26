@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0126-eb206898
 type: fact
-status: active
+status: implemented
 tags:
 - create-flow
 - ux

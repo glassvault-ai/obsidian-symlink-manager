@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0142-17fed898
 type: lesson
-status: active
+status: implemented
 tags:
 - phase-3
 - modal

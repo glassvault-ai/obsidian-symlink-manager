@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-1714-568308ea
 type: fact
-status: active
+status: implemented
 tags:
 - obsidian
 - release

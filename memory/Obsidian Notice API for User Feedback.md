@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0126-389f9ce0
 type: fact
-status: active
+status: implemented
 tags:
 - obsidian
 - notice
