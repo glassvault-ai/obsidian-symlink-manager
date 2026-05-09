@@ -7,7 +7,8 @@ tags:
 - id-generation
 - architecture
 scope: project
-created_at: '2026-02-15T01:26:35.603259+00:00'
+created_at: 2026-02-15T01:26:35.603259Z
+updated_at: 2026-05-09T23:21:28.520087Z
 created_by: ai-agent
 ---
 

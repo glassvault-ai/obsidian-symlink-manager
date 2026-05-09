@@ -8,7 +8,8 @@ tags:
 - rename
 - lesson
 scope: project
-created_at: '2026-02-15T03:20:21.046836+00:00'
+created_at: 2026-02-15T03:20:21.046836Z
+updated_at: 2026-05-09T23:21:28.503103Z
 created_by: ai-agent
 ---
 

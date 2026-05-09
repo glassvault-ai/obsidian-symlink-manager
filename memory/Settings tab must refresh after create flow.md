@@ -8,7 +8,8 @@ tags:
 - ux
 - lesson
 scope: project
-created_at: '2026-02-15T03:20:25.177866+00:00'
+created_at: 2026-02-15T03:20:25.177866Z
+updated_at: 2026-05-09T23:21:28.514328Z
 created_by: ai-agent
 ---
 

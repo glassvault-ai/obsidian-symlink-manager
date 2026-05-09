@@ -8,7 +8,8 @@ tags:
 - bug-fix
 - gotcha
 scope: project
-created_at: '2026-02-15T02:09:40.222561+00:00'
+created_at: 2026-02-15T02:09:40.222561Z
+updated_at: 2026-05-09T23:21:28.500913Z
 created_by: ai-agent
 ---
 

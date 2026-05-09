@@ -9,7 +9,8 @@ tags:
 - ui
 - summary
 scope: project
-created_at: '2026-02-19T19:05:59.066914+00:00'
+created_at: 2026-02-19T19:05:59.066914Z
+updated_at: 2026-05-09T23:21:28.505202Z
 created_by: ai-agent
 ---
 

@@ -8,7 +8,8 @@ tags:
 - obsidian
 - gotcha
 scope: project
-created_at: '2026-02-15T17:14:25.428676+00:00'
+created_at: 2026-02-15T17:14:25.428676Z
+updated_at: 2026-05-09T23:21:28.50369Z
 created_by: ai-agent
 ---
 

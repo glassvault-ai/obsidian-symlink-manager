@@ -8,7 +8,8 @@ tags:
 - eslint
 - sentence-case
 scope: project
-created_at: '2026-02-19T20:22:33.277523+00:00'
+created_at: 2026-02-19T20:22:33.277523Z
+updated_at: 2026-05-09T23:21:28.506384Z
 created_by: ai-agent
 ---
 

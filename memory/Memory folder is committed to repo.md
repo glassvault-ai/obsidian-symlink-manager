@@ -7,7 +7,8 @@ tags:
 - memory-vault
 - conventions
 scope: project
-created_at: '2026-02-14T23:23:32.743385+00:00'
+created_at: 2026-02-14T23:23:32.743385Z
+updated_at: 2026-05-09T23:21:28.501947Z
 created_by: ai-agent
 ---
 

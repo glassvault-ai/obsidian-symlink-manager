@@ -8,7 +8,8 @@ tags:
 - command-palette
 - architecture
 scope: project
-created_at: '2026-02-15T01:26:10.412243+00:00'
+created_at: 2026-02-15T01:26:10.412243Z
+updated_at: 2026-05-09T23:21:28.49464Z
 created_by: ai-agent
 ---
 

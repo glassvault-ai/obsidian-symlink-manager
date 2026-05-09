@@ -7,7 +7,8 @@ tags:
 - architecture
 - phase-1
 scope: project
-created_at: '2026-02-15T01:35:46.228319+00:00'
+created_at: 2026-02-15T01:35:46.228319Z
+updated_at: 2026-05-09T23:21:28.510393Z
 created_by: ai-agent
 ---
 

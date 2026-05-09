@@ -8,7 +8,8 @@ tags:
 - modal
 - architecture
 scope: project
-created_at: '2026-02-15T01:26:30.985426+00:00'
+created_at: 2026-02-15T01:26:30.985426Z
+updated_at: 2026-05-09T23:21:28.518921Z
 created_by: ai-agent
 ---
 

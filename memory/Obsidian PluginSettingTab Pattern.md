@@ -8,7 +8,8 @@ tags:
 - ui
 - architecture
 scope: project
-created_at: '2026-02-15T01:25:59.235217+00:00'
+created_at: 2026-02-15T01:25:59.235217Z
+updated_at: 2026-05-09T23:21:28.507746Z
 created_by: ai-agent
 ---
 

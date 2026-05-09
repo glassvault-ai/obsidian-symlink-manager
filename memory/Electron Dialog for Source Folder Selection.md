@@ -8,7 +8,8 @@ tags:
 - ux
 - modal
 scope: project
-created_at: '2026-02-15T01:25:49.737290+00:00'
+created_at: 2026-02-15T01:25:49.73729Z
+updated_at: 2026-05-09T23:21:28.497589Z
 created_by: ai-agent
 ---
 

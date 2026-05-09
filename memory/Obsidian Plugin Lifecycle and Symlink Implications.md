@@ -7,7 +7,8 @@ tags:
 - plugin-lifecycle
 - architecture
 scope: project
-created_at: '2026-02-15T01:24:51.012754+00:00'
+created_at: 2026-02-15T01:24:51.012754Z
+updated_at: 2026-05-09T23:21:28.507118Z
 created_by: ai-agent
 ---
 

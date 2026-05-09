@@ -8,7 +8,8 @@ tags:
 - source-deleted
 - ux
 scope: project
-created_at: '2026-02-15T01:27:10.453344+00:00'
+created_at: 2026-02-15T01:27:10.453344Z
+updated_at: 2026-05-09T23:21:28.501336Z
 created_by: ai-agent
 ---
 

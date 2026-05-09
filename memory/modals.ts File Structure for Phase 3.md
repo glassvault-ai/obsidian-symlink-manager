@@ -8,7 +8,8 @@ tags:
 - file-structure
 - implementation
 scope: project
-created_at: '2026-02-15T01:42:20.678247+00:00'
+created_at: 2026-02-15T01:42:20.678247Z
+updated_at: 2026-05-09T23:21:28.526506Z
 created_by: ai-agent
 ---
 

@@ -8,7 +8,8 @@ tags:
 - community-plugin
 - open-source
 scope: project
-created_at: '2026-02-15T17:14:20.729852+00:00'
+created_at: 2026-02-15T17:14:20.729852Z
+updated_at: 2026-05-09T23:21:28.508511Z
 created_by: ai-agent
 ---
 
