@@ -23,3 +23,11 @@ test('delayed filesystem probing yields and unload prevents new admission',async
  const m=new Coordinator(new LinkFiles(f.vault,disk),new SnapshotStore(plugin));await m.open(async()=>null);wait=true;const pending=m.add(f.entry());await began;
  let responsive=false;await new Promise(r=>setImmediate(()=>{responsive=true;r();}));assert(responsive);m.close();release();assert.equal((await pending).success,false);await assert.rejects(fs.lstat(path.join(f.vault,'link')),{code:'ENOENT'});
 });
+
+test('opening in another window moves modal cancellation ownership',async t=>{
+ const f=await loaded(t);const owner=new f.Element().win;f.app.modalWindow=owner;
+ f.electron.remote.dialog.showOpenDialog=async()=>({canceled:false,filePaths:[f.source]});
+ const pending=f.plugin.createSymlinkFromPicker();await until(()=>f.modals.length);
+ assert.equal(f.modals[0].modalEl.win,owner);owner.emit('pagehide');assert.equal(await pending,false);
+ assert.equal(owner.listeners.size,0);assert.equal(f.plugin.entries.length,0);
+});

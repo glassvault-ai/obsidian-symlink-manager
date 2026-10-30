@@ -6,10 +6,11 @@
 	"type": "module",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"build": "tsc --noEmit --skipLibCheck && node scripts/candidate.mjs",
 		"test": "node scripts/test.mjs",
 		"lint": "eslint src/",
-		"typecheck": "tsc --noEmit --skipLibCheck"
+		"typecheck": "tsc --noEmit --skipLibCheck",
+		"release:check": "node scripts/release-check.mjs"
 	},
 	"keywords": [],
 	"license": "MIT",

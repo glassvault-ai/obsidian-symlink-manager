@@ -7,6 +7,14 @@
 **Tags:** plan
 **Mode:** Autonomous through Phases 0–5. Core design/defaults approved. STOP before executing Wrap-up; final review is required.
 
+## Implementation status
+
+Phases 0–5 are implemented on the feature branch. Phase commits through Phase 4 are dfea2d3, f31eac9, 3073eb0, d7e39fb and 5d9f083; Phase 5 carries packaging, final regression coverage and the validation ledger. The candidate API floor resolved to 1.2.3 after checking newly used controls. The persistence contract includes a separate durable initialization marker so loss of the entire snapshot directory cannot silently reimport legacy settings. Root identity binding and post-open modal-window binding were strengthened during final validation.
+
+Local validation is recorded in VALIDATION.md: 84 passing tests, two native-platform skips, typecheck success, zero lint errors with three documented compatibility warnings, and zero reported dependency vulnerabilities. Native GUI/platform/device gaps, pending provenance execution and unknown owner-dashboard eligibility remain explicit gates. Release metadata intentionally remains blocked until a separately approved new version/mapping is selected. Existing main ref and protected ignored artifacts remain unchanged.
+
+**Wrap-up has not been executed. STOP for final review.**
+
 ## Purpose
 
 Preserve users' mappings and source data when folders disappear, filesystem state changes, or persistence fails. Replace inconsistent checks with a shared state, identity, containment and recovery mechanism, then resolve the actionable public review findings and correct support claims. The public directory's distribution decision remains a separate owner-dashboard investigation.
@@ -47,7 +55,7 @@ These checks cover the managed roots and destination ancestry, not every nested 
 
 Use a single serialized mutation queue shared by UI, commands, startup reconciliation and recovery. Operations are idempotent requests for a desired state, not blind toggles. Persist intent and an operation record before touching links; persistence failure at that boundary causes no filesystem mutation. The record carries the before/after destinations, expected link identities and enough state to decide whether a later startup should finish, retain a recoverable conflict, or acknowledge an already-completed operation.
 
-Proposed storage contract: keep two alternating, versioned and checksummed snapshots of plugin-owned metadata with monotonically increasing revisions. Each replacement is written completely to an exclusive temporary metadata file, flushed and atomically replaced within the plugin's private storage directory; validate the committed snapshot before allowing link mutations. Preserve the last valid generation. All storage paths are confined to explicitly verified plugin-owned metadata locations, distinct from managed symlink destinations. Metadata replacement may use atomic rename; managed-link rename must never use an operation that can overwrite another destination.
+Storage contract: keep an exclusively created initialization marker beside the recovery directory, flushed before initialization, and two alternating, versioned and checksummed snapshots of plugin-owned metadata with monotonically increasing revisions. Each replacement is written completely to an exclusive temporary metadata file, flushed and atomically replaced within the plugin's private storage directory; validate the committed snapshot before allowing link mutations. Preserve the last valid generation. All storage paths are confined to explicitly verified plugin-owned metadata locations, distinct from managed symlink destinations. Metadata replacement may use atomic rename; managed-link rename must never use an operation that can overwrite another destination.
 
 Read existing `data.json` through the host for one-time migration and preserve it as recovery evidence; new snapshots become authoritative after a verified migration commit. Do not claim host `saveData` alone provides a transaction with the filesystem. Do not silently downgrade to stale legacy settings once snapshots exist. If a damaged snapshot or schema makes the latest state ambiguous, show recoverable last-good data read-only rather than replaying older intent automatically. Document downgrade/export implications. This adds a storage component, but makes persistence-failure recovery testable rather than relying on a successful Notice or in-memory rollback.
 

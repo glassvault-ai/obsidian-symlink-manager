@@ -9,7 +9,7 @@ function host(root,legacy=null){
  class PluginSettingTab{constructor(app,plugin){this.app=app;this.plugin=plugin;this.containerEl=new Element();}}
  class FileSystemAdapter{getBasePath(){return path.join(root,'vault');}}
  class TFolder{constructor(p){this.path=p;}}
- class Modal{constructor(app){this.app=app;this.contentEl=new Element();this.modalEl=new Element();modals.push(this);}open(){this.onOpen?.();return this;}close(){this.onClose?.();}setPlaceholder(){}}
+ class Modal{constructor(app){this.app=app;this.contentEl=new Element();this.modalEl=new Element();modals.push(this);}open(){if(this.app.modalWindow)this.modalEl.win=this.app.modalWindow;this.onOpen?.();return this;}close(){this.onClose?.();}setPlaceholder(){}}
  class FuzzySuggestModal extends Modal{}
  const vaultRoot=new TFolder('/');const app={vault:{adapter:new FileSystemAdapter(),configDir:'.obsidian',getRoot:()=>vaultRoot,getAllLoadedFiles:()=>[vaultRoot]}};
  const electron={remote:{dialog:{showOpenDialog:async()=>({canceled:true,filePaths:[]})}}};

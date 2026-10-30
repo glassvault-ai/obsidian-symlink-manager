@@ -6,11 +6,20 @@ class Selection<T> {
 	private settled = false;
 	private timer: number | null = null;
 	private readonly abort: () => void;
-	constructor(private readonly win: Window, private readonly resolve: (value: T | null) => void,
+	constructor(private win: Window, private readonly resolve: (value: T | null) => void,
 		private readonly close: () => void, private readonly signal?: AbortSignal) {
 		this.abort = () => { this.finish(null); this.close(); };
 		win.addEventListener("pagehide", this.abort, { once: true });
 		signal?.addEventListener("abort", this.abort, { once: true });
+	}
+	attach(win: Window): void {
+		if (this.settled || this.win === win) return;
+		const deferred = this.timer !== null;
+		if (this.timer !== null) this.win.clearTimeout(this.timer);
+		this.win.removeEventListener("pagehide", this.abort);
+		this.win = win; this.timer = null;
+		this.win.addEventListener("pagehide", this.abort, { once: true });
+		if (deferred) this.deferCancel();
 	}
 	finish(value: T | null): void {
 		if (this.settled) return;
@@ -36,10 +45,11 @@ export class VaultFolderModal extends FuzzySuggestModal<TFolder> {
 		this.folders = [app.vault.getRoot(), ...app.vault.getAllLoadedFiles()
 			.filter((f): f is TFolder => f instanceof TFolder && f !== app.vault.getRoot())];
 	}
+	open(): void { super.open(); this.selection.attach(this.modalEl.win); }
 	getItems(): TFolder[] { return this.folders; }
 	getItemText(folder: TFolder): string { return folder.path || "/"; }
 	onChooseItem(folder: TFolder): void { this.selection.finish(folder); }
-	onClose(): void { this.selection.deferCancel(); }
+	onClose(): void { this.selection.attach(this.modalEl.win); this.selection.deferCancel(); }
 }
 export function pickVaultFolder(app: App, signal?: AbortSignal): Promise<TFolder | null> {
 	if (signal?.aborted) return Promise.resolve(null);
@@ -52,10 +62,11 @@ export class ToggleSymlinkModal extends FuzzySuggestModal<SymlinkEntry> {
 		this.selection = new Selection(this.modalEl.win, onSelect, () => this.close(), signal);
 		this.setPlaceholder("Choose symlink to toggle...");
 	}
+	open(): void { super.open(); this.selection.attach(this.modalEl.win); }
 	getItems(): SymlinkEntry[] { return this.symlinks; }
 	getItemText(entry: SymlinkEntry): string { return `${entry.name} ${entry.enabled ? "(on)" : "(off)"}`; }
 	onChooseItem(entry: SymlinkEntry): void { this.selection.finish(entry); }
-	onClose(): void { this.selection.deferCancel(); }
+	onClose(): void { this.selection.attach(this.modalEl.win); this.selection.deferCancel(); }
 }
 export function pickSymlinkToToggle(app: App, entries: SymlinkEntry[], signal?: AbortSignal): Promise<SymlinkEntry | null> {
 	if (signal?.aborted) return Promise.resolve(null);
@@ -68,6 +79,7 @@ class ConfirmDeleteModal extends Modal {
 		super(app);
 		this.selection = new Selection(this.modalEl.win, value => onConfirm(value === true), () => this.close(), signal);
 	}
+	open(): void { super.open(); this.selection.attach(this.modalEl.win); }
 	onOpen(): void {
 		this.contentEl.createEl("h3", { text: this.forget ? "Forget mapping?" : "Remove symlink?" });
 		this.contentEl.createEl("p", { text: this.forget

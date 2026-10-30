@@ -17,10 +17,14 @@ export function contains(parent: string, child: string): boolean {
 function sameFile(a: Stats, b: Stats): boolean { return a.ino !== 0 && a.dev === b.dev && a.ino === b.ino; }
 export interface LinkObservation { kind: "matching" | "absent" | "conflict"; target: string; message: string }
 export class LinkFiles {
+	private boundRoot: { path: string; stat: Stats } | null = null;
 	constructor(readonly root: string, readonly disk: Disk = fs) {}
 	async canonicalRoot(): Promise<string> {
 		const root = await this.disk.realpath(this.root);
-		if (!(await this.disk.stat(root)).isDirectory()) throw new SafetyError("conflict", "Vault root is not a directory");
+		const stat = await this.disk.stat(root);
+		if (!stat.isDirectory()) throw new SafetyError("conflict", "Vault root is not a directory");
+		if (this.boundRoot && (path.relative(this.boundRoot.path, root) !== "" || (stat.ino !== 0 && this.boundRoot.stat.ino !== 0 && !sameFile(stat, this.boundRoot.stat)))) throw new SafetyError("conflict", "Vault root changed during this session; reload only after reviewing its location");
+		this.boundRoot = { path: root, stat };
 		return root;
 	}
 	async target(entry: Entry, missingAllowed = false): Promise<string> {

@@ -29,6 +29,24 @@ export class SnapshotStore implements Storage {
 		this.boundRoot = root;
 		return path.join(root, "symlink-manager-state");
 	}
+	private async syncDirectory(directory: string): Promise<void> {
+		if (process.platform === "win32") return;
+		const handle = await fs.open(directory, "r");
+		try { await handle.sync(); } finally { await handle.close(); }
+	}
+	private async initialized(directory: string): Promise<boolean> {
+		const marker = `${directory}.initialized`;
+		let before;
+		try { before = await fs.lstat(marker); }
+		catch (error) { if (errorCode(error) === "ENOENT") return false; throw error; }
+		if (!before.isFile() || before.isSymbolicLink()) throw new RecoveryError("Initialization marker is not a regular file");
+		const handle = await fs.open(marker, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+		try {
+			const current = await handle.stat();
+			if (current.ino !== before.ino || current.dev !== before.dev || await handle.readFile("utf8") !== "symlink-manager-state-v2\n") throw new RecoveryError("Initialization marker is invalid");
+		} finally { await handle.close(); }
+		return true;
+	}
 	private async readSlot(file: string): Promise<Snapshot> {
 		const before = await fs.lstat(file);
 		if (!before.isFile() || before.isSymbolicLink()) throw new RecoveryError("Recovery snapshot is not a regular file");
@@ -46,10 +64,18 @@ export class SnapshotStore implements Storage {
 	}
 	private async scan(): Promise<{ latest: Snapshot; token: string } | null> {
 		const directory = await this.directory();
+		const initialized = await this.initialized(directory);
 		try {
 			const stat = await fs.lstat(directory);
 			if (!stat.isDirectory() || stat.isSymbolicLink()) throw new RecoveryError("Recovery directory is not a real directory");
-		} catch (error) { if (errorCode(error) === "ENOENT") return null; throw error; }
+		} catch (error) {
+			if (errorCode(error) === "ENOENT") {
+				if (initialized) throw new RecoveryError("Recovery directory is missing after initialization; legacy replay is blocked");
+				return null;
+			}
+			throw error;
+		}
+		if (!initialized) throw new RecoveryError("Initialization marker is missing; preserve recovery files before repair");
 		const outcomes = await Promise.allSettled(["a.json", "b.json"].map(n => this.readSlot(path.join(directory, n))));
 		const good = outcomes.flatMap(r => r.status === "fulfilled" ? [r.value] : []).sort((a,b) => b.revision-a.revision);
 		const latest = good[0];
@@ -87,10 +113,7 @@ export class SnapshotStore implements Storage {
 		await fs.rename(temporary, target);
 		await this.hook("after-replace");
 		// Directory fsync is unsupported on some Windows filesystems. File flush still applies there.
-		if (process.platform !== "win32") {
-			const parent = await fs.open(directory, "r");
-			try { await parent.sync(); } finally { await parent.close(); }
-		}
+		await this.syncDirectory(directory);
 		await this.hook("before-verify");
 		const verified = await this.readSlot(target);
 		if (verified.revision !== revision || verified.checksum !== digest(revision, state)) throw new RecoveryError("Recovery write verification failed");
@@ -98,7 +121,13 @@ export class SnapshotStore implements Storage {
 	async initialize(state: State): Promise<void> {
 		parseState(state);
 		if (await this.scan()) throw new RecoveryError("Recovery storage already exists");
-		await fs.mkdir(await this.directory(), { mode: 0o700 });
+		const directory = await this.directory();
+		const marker = await fs.open(`${directory}.initialized`, "wx", 0o600);
+		try { await marker.writeFile("symlink-manager-state-v2\n"); await marker.sync(); }
+		finally { await marker.close(); }
+		await this.syncDirectory(path.dirname(directory));
+		await fs.mkdir(directory, { mode: 0o700 });
+		await this.syncDirectory(path.dirname(directory));
 		await this.writeSlot("a.json", 1, state);
 		await this.writeSlot("b.json", 1, state);
 		await this.load();
