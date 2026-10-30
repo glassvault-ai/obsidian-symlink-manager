@@ -1,6 +1,9 @@
 import esbuild from "esbuild";
 import process from "process";
 import { builtinModules } from "node:module";
+import { mkdtemp, writeFile, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
 const banner =
 `/*
@@ -11,6 +14,8 @@ if you want to view the source, please visit the github repository of this plugi
 
 const prod = (process.argv[2] === "production");
 
+// Always allocate a fresh output directory; never overwrite a development installation.
+const output = await mkdtemp(path.join(tmpdir(), "symlink-candidate-"));
 const context = await esbuild.context({
 	banner: {
 		js: banner,
@@ -37,13 +42,18 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "main.js",
+	outfile: path.join(output, "main.js"),
 	minify: prod,
 });
 
+for (const name of ["manifest.json", "styles.css"]) {
+ await writeFile(path.join(output, name), await readFile(name));
+}
+console.log(`Candidate output: ${output}`);
+
 if (prod) {
 	await context.rebuild();
-	process.exit(0);
+	await context.dispose();
 } else {
 	await context.watch();
 }
