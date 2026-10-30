@@ -16,9 +16,8 @@ export class VaultFolderModal extends FuzzySuggestModal<TFolder> {
 		this.onSelect = onSelect;
 		this.setPlaceholder("Choose vault folder for symlink...");
 
-		this.folders = this.app.vault
-			.getAllLoadedFiles()
-			.filter((f): f is TFolder => f instanceof TFolder);
+		this.folders = [this.app.vault.getRoot(), ...this.app.vault.getAllLoadedFiles()
+			.filter((f): f is TFolder => f instanceof TFolder && f !== this.app.vault.getRoot())];
 	}
 
 	getItems(): TFolder[] {
@@ -80,7 +79,7 @@ export class ToggleSymlinkModal extends FuzzySuggestModal<SymlinkEntry> {
 	}
 
 	getItemText(entry: SymlinkEntry): string {
-		const status = entry.active ? "(on)" : "(off)";
+		const status = entry.enabled ? "(on)" : "(off)";
 		return `${entry.name} ${status}`;
 	}
 
@@ -118,18 +117,20 @@ class ConfirmDeleteModal extends Modal {
 	private entryName: string;
 	private onConfirm: (confirmed: boolean) => void;
 	private confirmed = false;
+	private forget: boolean;
 
-	constructor(app: App, entryName: string, onConfirm: (confirmed: boolean) => void) {
+	constructor(app: App, entryName: string, onConfirm: (confirmed: boolean) => void, forget = false) {
 		super(app);
 		this.entryName = entryName;
+		this.forget = forget;
 		this.onConfirm = onConfirm;
 	}
 
 	onOpen(): void {
 		const { contentEl } = this;
-		contentEl.createEl("h3", { text: "Remove symlink?" });
+		contentEl.createEl("h3", { text: this.forget ? "Forget mapping?" : "Remove symlink?" });
 		contentEl.createEl("p", {
-			text: `This will remove "${this.entryName}" from your managed symlinks and unlink it from the vault.`,
+			text: this.forget ? `Forget "${this.entryName}" from settings only? All existing links will remain untouched.` : `Remove the managed pointer for "${this.entryName}" and its settings entry? Source contents are preserved.`,
 		});
 
 		new Setting(contentEl)
@@ -138,7 +139,7 @@ class ConfirmDeleteModal extends Modal {
 			)
 			.addButton((btn) =>
 				btn
-					.setButtonText("Remove")
+					.setButtonText(this.forget ? "Forget" : "Remove")
 					.setWarning()
 					.onClick(() => {
 						this.confirmed = true;
@@ -155,8 +156,8 @@ class ConfirmDeleteModal extends Modal {
 /**
  * Show a delete confirmation modal. Returns true if user confirms.
  */
-export function confirmDelete(app: App, entryName: string): Promise<boolean> {
+export function confirmDelete(app: App, entryName: string, forget = false): Promise<boolean> {
 	return new Promise((resolve) => {
-		new ConfirmDeleteModal(app, entryName, resolve).open();
+		new ConfirmDeleteModal(app, entryName, resolve, forget).open();
 	});
 }

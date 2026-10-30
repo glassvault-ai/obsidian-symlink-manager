@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-606c4f22
 type: decision
-status: implemented
+status: superseded
 tags:
 - safety
 - symlink
@@ -13,8 +13,10 @@ updated_at: 2026-05-09T23:21:28.516118Z
 created_by: ai-agent
 ---
 
-A symlink loop occurs when the source path is inside the vault (or IS the vault). If someone symlinks vault/notes/ into vault/links/notes/, Obsidian would recurse infinitely scanning files. We MUST validate before creating any symlink that the source path is not a subdirectory of the vault root, and the vault root is not a subdirectory of the source path. Use path.resolve() on both and check with startsWith() in both directions. The vault root is available via (this.app.vault.adapter as FileSystemAdapter).getBasePath(). This check runs at creation time — if it fails, show a Notice explaining why and abort.
+The original loop-prevention design compared resolved path spelling against the vault root. That admits aliases of the vault and overlooks overlapping external roots and linked destination ancestors. The reliability design requires canonical source identity, disjoint configured roots, and physical destination containment before creation or restoration.
+
+An unavailable path is uncertainty rather than evidence of safety. Previously verified canonical locations help preserve reservations, while uncertain legacy aliases defer admission. Source trees are not recursively scanned, so arbitrary unmanaged nested cycles remain outside this guarantee. See src/reliability/files.ts for the shared boundary.
 
 Related:
-[[Symlink Safety Overwrite Protection]]
-[[On-Load Validation of Symlinks]]
+[[Managed link operations require physical destination containment]]
+[[Filesystem identity evidence must survive remounts without trusting stale aliases]]

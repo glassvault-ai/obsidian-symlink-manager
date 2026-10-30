@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-2ebbe89c
 type: decision
-status: implemented
+status: superseded
 tags:
 - validation
 - startup
@@ -13,9 +13,11 @@ updated_at: 2026-05-09T23:21:28.509808Z
 created_by: ai-agent
 ---
 
-When the plugin loads (onload), it should validate every SymlinkEntry marked as active=true. Two checks per entry: (1) does the symlink still exist at the vault path? (fs.existsSync + lstatSync.isSymbolicLink), and (2) does the source folder still exist? If the symlink is gone but source exists, silently recreate it (the user may have manually deleted it or another tool removed it). If the source folder is gone, mark the entry as active=false and show a Notice warning the user. Don't delete the entry — the source might come back (external drive reconnected, etc). This validation runs once at startup, not on a timer.
+The original retention decision remains: an unavailable source is not a request to delete its mapping. The reliability implementation now retains desired enablement separately from observed health rather than changing an active flag to false. Startup and explicit Refresh reconcile safe configurations through the same operation coordinator; conflicts and I/O failures preserve evidence. There is no background poller.
+
+The former 1.0.2 implementation deleted entries despite this original policy. The shared coordinator in src/reliability/coordinator.ts now provides recovery ordering before ordinary startup reconciliation.
 
 Related:
-[[Symlink Safety Overwrite Protection]]
+[[Desired symlink state survives unavailable sources]]
 [[Handling Deleted Source Folders Gracefully]]
 [[Obsidian Plugin Lifecycle and Symlink Implications]]

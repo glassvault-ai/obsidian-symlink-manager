@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0127-0d270223
 type: decision
-status: implemented
+status: superseded
 tags:
 - safety
 - resilience
@@ -13,8 +13,11 @@ updated_at: 2026-05-09T23:21:28.501336Z
 created_by: ai-agent
 ---
 
-External source folders can disappear: drive disconnected, folder renamed, project moved. The plugin must handle this without crashing. When a source no longer exists: (1) at startup validation, mark the entry as active=false and warn via Notice, (2) in the settings tab, show a visual indicator (e.g., warning text) that the source is missing, (3) don't auto-delete the entry — the source might come back. The user can manually delete the entry if they know it's gone for good. When toggling on an entry whose source is missing, show a Notice explaining the source wasn't found and abort the toggle. This is a recoverable state, not an error.
+A disconnected drive, renamed folder or permission failure must preserve the mapping. The reliability model preserves the enabled preference as well: health communicates that it cannot currently be realized. On startup or explicit Refresh, accessible sources are revalidated before restoring a missing pointer. Conflicts never authorize automatic replacement.
+
+This extends the original instruction to keep unavailable entries rather than delete them. The old instruction to set active=false is superseded by separate desired state and observed health, so reconnecting a source does not silently lose the user’s preference. See src/reliability/coordinator.ts for reconciliation and src/settings.ts for the presentation.
 
 Related:
+[[Desired symlink state survives unavailable sources]]
+[[On-Load Validation of Symlinks]]
 [[Symlink Safety Never Delete the Source Folder]]
-[[Symlink Safety Overwrite Protection]]

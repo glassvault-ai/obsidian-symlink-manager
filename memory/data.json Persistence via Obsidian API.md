@@ -1,7 +1,7 @@
 ---
 note_id: 20260215-0125-eb3f3ff1
 type: fact
-status: active
+status: outdated
 tags:
 - obsidian
 - data-persistence
@@ -13,8 +13,10 @@ updated_at: 2026-05-09T23:21:28.522729Z
 created_by: ai-agent
 ---
 
-Obsidian provides loadData() and saveData() on the Plugin class for persisting plugin state. This reads/writes to .obsidian/plugins/<plugin-id>/data.json automatically. We store the array of SymlinkEntry objects here. Important: saveData() is async and overwrites the entire file — there's no partial update. This means we should always save the full settings object after any mutation (add, remove, toggle, rename). There's no built-in debounce, so rapid toggling could cause multiple writes. In practice this is fine because the data is small, but if we ever batch-toggle we should save once at the end, not per-symlink. loadData() returns null if data.json doesn't exist yet (first install), so we need a default settings fallback.
+Historical 1.0.2 behavior used Obsidian loadData/saveData to replace the entire settings object after filesystem changes. Awaiting each save was necessary but insufficient: a rejected save could leave old active metadata that recreated a removed link on restart.
+
+The reliability implementation reads legacy data.json once but preserves it. Validated metadata generations become authoritative, with durable operation intent committed before pointer mutation. A missing or corrupt recovery generation cannot silently fall back to legacy settings. This changes downgrade behavior: reverting to the old plugin without reviewing its old settings can replay stale intent. See src/reliability/store.ts and the recovery documentation.
 
 Related:
-[[Obsidian Plugin Lifecycle and Symlink Implications]]
-[[Unique ID Generation for SymlinkEntry]]
+[[Durable operation intent prevents stale settings from resurrecting links]]
+[[Incomplete recovery generations must never trigger legacy replay]]
