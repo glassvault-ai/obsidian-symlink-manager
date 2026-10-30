@@ -129,6 +129,7 @@ export class Coordinator {
 		}
 	}
 	private async perform(pending: Pending): Promise<void> {
+		if (this.stopped) throw new SafetyError("error", "Plugin unloaded before the operation was admitted");
 		const id = (pending.after ?? pending.before)?.id;
 		if (!id) throw new SafetyError("error", "Operation has no identity");
 		const entries = replace(this.idle().entries, pending.after, id);

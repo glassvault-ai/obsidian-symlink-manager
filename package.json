@@ -7,18 +7,24 @@
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"test": "node scripts/test.mjs"
+		"test": "node scripts/test.mjs",
+		"lint": "eslint src/",
+		"typecheck": "tsc --noEmit --skipLibCheck"
 	},
 	"keywords": [],
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
 		"esbuild": "0.25.5",
-		"eslint-plugin-obsidianmd": "^0.1.9",
+		"eslint": "9.39.5",
+		"eslint-plugin-obsidianmd": "0.4.2",
+		"globals": "16.5.0",
+		"obsidian": "1.14.4",
 		"tslib": "2.4.0",
-		"typescript": "^5.8.3"
+		"typescript": "^5.8.3",
+		"typescript-eslint": "8.72.1"
 	},
-	"dependencies": {
-		"obsidian": "latest"
+	"overrides": {
+		"moment": "2.31.0"
 	}
 }

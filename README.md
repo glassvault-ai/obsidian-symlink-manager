@@ -1,69 +1,57 @@
 # Symlink Manager
 
-An Obsidian plugin that lets you link external folders into your vault using symlinks. Linked folders are fully integrated — files show up in search, graph view, and the file explorer, and are fully editable just like any other vault file. Manage connections from settings, toggle them on/off, and seamlessly bring outside projects into your workflow.
+Link an external directory into an Obsidian desktop vault and manage its pointer from settings. Edits to linked notes change the original files. Disabling or removing a managed link removes its pointer, not its source contents.
 
-**Desktop only** — requires filesystem access not available on mobile.
+This branch is an unreleased reliability candidate. Published 1.0.2 has different persistence and safety behavior. The public directory currently exposes a disabled install control; a listing or download count does not establish current installability. This candidate has not been published or approved for deployment.
 
-> **Note:** This plugin accesses folders outside your vault to create symlinks pointing into it. No data is collected or transmitted — all operations are local.
+## Requirements and limits
 
-## Features
+- Candidate API minimum: Obsidian **1.2.3**, including the settings controls used here. Actual minimum-version UI validation is still required before a release. The imperative dashboard supports older hosts; it does not yet integrate with the settings search introduced in 1.13.
+- Desktop only. The implementation uses directory symlinks on macOS/Linux and junctions on Windows. Native validation status is recorded in [VALIDATION.md](VALIDATION.md); an implemented Windows path is not proof that every Windows volume is tested.
+- Sources must be accessible directories, disjoint from the vault and other configured sources. Canonical aliases and overlapping source roots are rejected. A destination must be a real folder beneath the vault's canonical root; placing links inside an existing linked folder is rejected.
+- Portable names exclude dot/dot-dot, separators, reserved device names, trailing periods/spaces and control characters. Destination names are reserved case-insensitively for portability; source identity does not blindly lowercase paths.
+- Arbitrary nested unmanaged symlinks inside source trees are not recursively scanned. Another program changing paths concurrently can invalidate filesystem observations; checks are not an atomic cross-process lock. Run only one manager for a given vault at a time.
+- Symlinks are not a synchronization mechanism. Do not synchronize the manager's machine-local settings/recovery files between computers. A copied vault or changed path may require reviewing and recreating mappings.
+- Obsidian has additional [symlink limitations](https://obsidian.md/help/symlinks), including cross-device moves and sync interactions. Do not assume that every file-manager move, link update or sync workflow works through a link. Keep backups of the original data.
 
-- **Link external folders** — Pick any folder on your computer and link it into your vault. Files are fully editable in Obsidian — read, write, rename, everything works
-- **Choose vault location** — Place symlinks in any vault folder via a fuzzy search picker
-- **Toggle on/off** — Activate or deactivate symlinks without removing them from your list
-- **Bulk toggle** — Enable or disable all symlinks at once
-- **Settings dashboard** — View, rename, toggle, and delete all managed symlinks
-- **Startup validation** — Automatically detects and cleans up broken symlinks on load
-- **Safety checks** — Loop prevention, overwrite protection, and duplicate detection
+## Use
 
-## Usage
+Run **Link external folder**, or use the ribbon link icon, to choose a source and destination. Root placement is supported. Settings provide:
 
-### Adding a symlink
+- **Enabled preference:** the desired state, separate from the displayed filesystem health.
+- **Refresh:** check sources and retry saved preferences. An unavailable source retains its entry and enabled preference; startup and Refresh retry when it returns. There is no background polling.
+- **Rename:** enter a new name and leave the field. The same safety checks apply even to disabled entries. A failed rename attempts to restore its old link; failed recovery is shown explicitly.
+- **Remove:** confirm removal of a verified managed pointer and its entry. A conflicting file, real directory or foreign link is preserved.
+- **Forget:** explicitly remove metadata only when a conflict needs to be abandoned. All existing pointers remain untouched. This is also available for pending operations; review both names before forgetting an interrupted rename.
+- **Keep disabled:** cancel recoverable pending intent and retain a disabled mapping when the observed paths are unambiguous.
 
-1. Click the **link icon** in the ribbon, or run **Link external folder** from the command palette (Cmd/Ctrl+P)
-2. Select the external folder you want to link
-3. Choose where in your vault to place the symlink
-4. The folder appears in your vault immediately
+Commands also enable/disable all entries, select an entry to toggle, and refresh health. Bulk results report successes and failures. Disabling the plugin leaves existing links in place; pending work already durably admitted may finish or be recovered at the next load. Late picker responses cannot start new work after unload.
 
-### Managing symlinks
+## Recovery and migration
 
-Open **Settings > Symlink Manager** to see all managed symlinks. From there you can:
+On a candidate's first load, valid legacy `data.json` entries are imported without changing that file. Invalid records are retained for review rather than acted upon. Thereafter the plugin uses two checksummed metadata generations in its own `symlink-manager-state` directory. Intent is committed before any link mutation. If final persistence fails, further mutations stop until Refresh can reconcile the pending operation.
 
-- **Toggle** — flip the switch to activate/deactivate
-- **Rename** — click the name field, type a new name, click away to save
-- **Delete** — click the trash icon (with confirmation)
+A missing, unreadable, corrupt or unsupported recovery snapshot makes the manager read-only. It does **not** import old settings again or silently replay an older generation. Preserve the original legacy file, both snapshots and any temporary metadata evidence before attempting repair. Work from copies in a disposable vault and report the error without publishing private source paths. Read-only recovery currently requires reviewed restoration of the metadata files; there is no automatic corruption-repair button.
 
-### Commands
+An interrupted rename with one expected pointer can be reconciled. If neither pointer exists, use Keep disabled to preserve a safe mapping, or Forget and relink after reviewing the source. Ambiguous or foreign paths are left alone. Reverting to 1.0.2 can replay its stale `data.json`; do not downgrade with old active mappings without reviewing them first.
 
-| Command | Description |
-|---------|-------------|
-| Link external folder | Start the create flow |
-| Toggle symlink... | Pick a symlink to toggle on/off |
-| Enable all symlinks | Activate all managed symlinks |
-| Disable all symlinks | Deactivate all managed symlinks |
+## Candidate development and verification
 
-## How it works
+```sh
+npm ci --ignore-scripts
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
 
-The plugin creates standard directory symlinks (or junctions on Windows) pointing from inside your vault to external folders. Obsidian treats symlinked folders like regular folders — files appear in the file explorer, search, and graph view, and any edits you make are written directly to the original files on disk.
+Builds allocate a fresh directory under the operating system's temporary directory and print its path. They never overwrite checkout-root `main.js` or `data.json`. Tests create disposable sources/vaults with sentinels; they do not load an installed plugin or real vault settings. `npm run dev` watches only its newly allocated temporary output directory.
 
-When you disable a symlink, the filesystem link is removed but the entry stays in your settings so you can re-enable it later. Deleting an entry removes both the symlink and the settings entry.
+The candidate manifest's API floor is corrected, while published version history stays unchanged. A separately approved release must choose its version and add the corresponding `versions.json` entry. Build attestations and directory eligibility are separate release checks; local build equality alone supplies neither.
 
-On startup, the plugin validates all managed symlinks and silently repairs or removes entries where the source folder no longer exists.
+## Installation
 
-## Installing
-
-### From Obsidian Community Plugins
-
-1. Open **Settings > Community plugins**
-2. Search for **Symlink Manager**
-3. Click **Install**, then **Enable**
-
-### Manual installation
-
-1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/glassvault-ai/obsidian-symlink-manager/releases/latest)
-2. Create a folder at `<your-vault>/.obsidian/plugins/symlink-manager/`
-3. Copy the downloaded files into that folder
-4. Restart Obsidian and enable the plugin in Settings > Community plugins
+Use only an approved published release for normal installation. Where the directory enables installation, use Obsidian's community browser. A manual release installation uses `main.js`, `manifest.json` and `styles.css` from that exact release in its own plugin directory. Never copy another vault's `data.json` or recovery snapshots as an installation step. Candidate UI testing belongs in a disposable vault; it does not authorize replacing an existing installation.
 
 ## License
 

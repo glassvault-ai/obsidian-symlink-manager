@@ -7,13 +7,14 @@ import { LinkFiles } from "./reliability/files";
 import { SnapshotStore } from "./reliability/store";
 import { healthError, type Entry } from "./reliability/model";
 import { SymlinkManagerSettingTab } from "./settings";
-import { pickVaultFolder, pickSymlinkToToggle } from "./modals";
+import { pickVaultFolder, pickSymlinkToToggle, confirmDelete, cancellable } from "./modals";
 
 export default class SymlinkManagerPlugin extends Plugin {
 	manager: Coordinator | null = null;
 	private tab: SymlinkManagerSettingTab | null = null;
 	private operations = 0;
 	private unloaded = false;
+	private readonly lifetime = new AbortController();
 	get busy(): boolean { return this.operations > 0; }
 	get entries(): Entry[] { return this.manager?.entries ?? []; }
 
@@ -38,6 +39,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 	}
 	onunload(): void {
 		this.unloaded = true;
+		this.lifetime.abort();
 		this.manager?.close();
 		// Existing links persist. Durable pending work is reconciled at the next load.
 	}
@@ -63,10 +65,10 @@ export default class SymlinkManagerPlugin extends Plugin {
 	}
 	async createSymlinkFromPicker(): Promise<boolean> {
 		return this.execute(async () => {
-			const selected = await remote.dialog.showOpenDialog({ title: "Select external folder to link", properties: ["openDirectory"] });
+			const selected = await cancellable(remote.dialog.showOpenDialog({ title: "Select external folder to link", properties: ["openDirectory"] }), this.lifetime.signal, { canceled: true, filePaths: [] });
 			if (this.unloaded || selected.canceled || !selected.filePaths[0]) return { success: false, message: "" };
 			const sourcePath = selected.filePaths[0];
-			const folder = await pickVaultFolder(this.app);
+			const folder = await pickVaultFolder(this.app, this.lifetime.signal);
 			if (this.unloaded || folder === null) return { success: false, message: "" };
 			return this.engine().add({ id: randomUUID(), name: path.basename(sourcePath), sourcePath,
 				vaultPath: folder.path === "/" ? "" : folder.path, enabled: true });
@@ -76,9 +78,15 @@ export default class SymlinkManagerPlugin extends Plugin {
 		return this.execute(async () => {
 			const entries = this.entries;
 			if (!entries.length) return { success: false, message: "No symlinks to toggle" };
-			const selected = await pickSymlinkToToggle(this.app, entries);
+			const selected = await pickSymlinkToToggle(this.app, entries, this.lifetime.signal);
 			if (this.unloaded || !selected) return { success: false, message: "" };
 			return this.engine().setEnabled(selected.id, !selected.enabled);
+		});
+	}
+	async confirmRemoval(id: string, name: string, forget = false): Promise<boolean> {
+		return this.execute(async () => {
+			if (!await confirmDelete(this.app, name, forget, this.lifetime.signal) || this.unloaded) return { success: false, message: "" };
+			return forget ? this.engine().forget(id) : this.engine().remove(id);
 		});
 	}
 	async addSymlink(entry: Entry): Promise<boolean> { return this.execute(() => this.engine().add(entry)); }

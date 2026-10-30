@@ -1,12 +1,14 @@
 import { PluginSettingTab, Setting, App } from "obsidian";
 import type SymlinkManagerPlugin from "./main";
-import { confirmDelete } from "./modals";
 
+// The dynamic management dashboard must also work before Obsidian 1.13.
 export class SymlinkManagerSettingTab extends PluginSettingTab {
 	private visible = false;
 	constructor(app: App, readonly plugin: SymlinkManagerPlugin) { super(app, plugin); }
 	hide(): void { this.visible = false; }
-	refresh(): void { if (this.visible) this.display(); }
+	refresh(): void {
+		if (this.visible) this.display();
+	}
 	display(): void {
 		this.visible = true;
 		const container = this.containerEl;
@@ -26,8 +28,8 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 			new Setting(container).setName(`Pending operation: ${recovery.name}`)
 				.setDesc("Refresh to recover, keep a safe disabled mapping, or forget metadata and leave all pointers untouched.")
 				.addButton(b => b.setButtonText("Keep disabled").setDisabled(unavailable).onClick(() => { void this.plugin.setSymlinkEnabled(recovery.id, false); }))
-				.addButton(b => b.setButtonText("Forget").setDisabled(unavailable).onClick(async () => {
-					if (await confirmDelete(this.app, `${pending?.before?.name ?? ""} / ${pending?.after?.name ?? ""}`, true)) await this.plugin.forgetSymlinkEntry(recovery.id);
+				.addButton(b => b.setButtonText("Forget").setDisabled(unavailable).onClick(() => {
+					void this.plugin.confirmRemoval(recovery.id, `${pending?.before?.name ?? ""} / ${pending?.after?.name ?? ""}`, true);
 				}));
 		}
 		if (!this.plugin.entries.length) { container.createEl("p", { text: "No managed entries.", cls: "setting-item-description" }); return; }
@@ -46,13 +48,13 @@ export class SymlinkManagerSettingTab extends PluginSettingTab {
 			setting.addToggle(toggle => toggle.setValue(entry.enabled).setDisabled(unavailable || Boolean(pending))
 				.onChange(enabled => { void this.plugin.setSymlinkEnabled(entry.id, enabled); }));
 			setting.addExtraButton(btn => btn.setIcon("trash").setTooltip("Remove managed link")
-				.onClick(async () => {
+				.onClick(() => {
 					if (unavailable || pending) return;
-					if (await confirmDelete(this.app, entry.name)) await this.plugin.removeSymlinkEntry(entry.id);
+					void this.plugin.confirmRemoval(entry.id, entry.name);
 				}));
 			if (health?.kind === "conflict" || health?.kind === "error") setting.addButton(b => b.setButtonText("Forget")
-				.setDisabled(unavailable || Boolean(pending)).onClick(async () => {
-					if (await confirmDelete(this.app, entry.name, true)) await this.plugin.forgetSymlinkEntry(entry.id);
+				.setDisabled(unavailable || Boolean(pending)).onClick(() => {
+					void this.plugin.confirmRemoval(entry.id, entry.name, true);
 				}));
 		}
 	}

@@ -1,163 +1,97 @@
 import { App, FuzzySuggestModal, Modal, Setting, TFolder } from "obsidian";
 import type { SymlinkEntry } from "./types";
 
-/**
- * Modal for selecting a folder inside the vault.
- * Used in the create-symlink flow to pick where to place the symlink.
- * Wraps FuzzySuggestModal in a Promise via a resolve callback.
- */
+/** Owns settlement and window-lifetime cleanup, preserving close-before-choose ordering. */
+class Selection<T> {
+	private settled = false;
+	private timer: number | null = null;
+	private readonly abort: () => void;
+	constructor(private readonly win: Window, private readonly resolve: (value: T | null) => void,
+		private readonly close: () => void, private readonly signal?: AbortSignal) {
+		this.abort = () => { this.finish(null); this.close(); };
+		win.addEventListener("pagehide", this.abort, { once: true });
+		signal?.addEventListener("abort", this.abort, { once: true });
+	}
+	finish(value: T | null): void {
+		if (this.settled) return;
+		this.settled = true;
+		if (this.timer !== null) this.win.clearTimeout(this.timer);
+		this.win.removeEventListener("pagehide", this.abort);
+		this.signal?.removeEventListener("abort", this.abort);
+		this.resolve(this.signal?.aborted ? null : value);
+	}
+	deferCancel(): void {
+		if (this.settled || this.timer !== null) return;
+		this.timer = this.win.setTimeout(() => this.finish(null), 0);
+	}
+}
+
 export class VaultFolderModal extends FuzzySuggestModal<TFolder> {
-	private folders: TFolder[];
-	private onSelect: (folder: TFolder | null) => void;
-	private picked = false;
-
-	constructor(app: App, onSelect: (folder: TFolder | null) => void) {
+	private readonly selection: Selection<TFolder>;
+	private readonly folders: TFolder[];
+	constructor(app: App, onSelect: (folder: TFolder | null) => void, signal?: AbortSignal) {
 		super(app);
-		this.onSelect = onSelect;
+		this.selection = new Selection(this.modalEl.win, onSelect, () => this.close(), signal);
 		this.setPlaceholder("Choose vault folder for symlink...");
-
-		this.folders = [this.app.vault.getRoot(), ...this.app.vault.getAllLoadedFiles()
-			.filter((f): f is TFolder => f instanceof TFolder && f !== this.app.vault.getRoot())];
+		this.folders = [app.vault.getRoot(), ...app.vault.getAllLoadedFiles()
+			.filter((f): f is TFolder => f instanceof TFolder && f !== app.vault.getRoot())];
 	}
-
-	getItems(): TFolder[] {
-		return this.folders;
-	}
-
-	getItemText(folder: TFolder): string {
-		return folder.path === "" ? "/" : folder.path;
-	}
-
-	onChooseItem(folder: TFolder): void {
-		this.picked = true;
-		this.onSelect(folder);
-	}
-
-	onClose(): void {
-		// Defer: onClose can fire before onChooseItem in Obsidian's modal lifecycle.
-		// setTimeout ensures onChooseItem sets picked=true before we check.
-		setTimeout(() => {
-			if (!this.picked) {
-				this.onSelect(null);
-			}
-		}, 0);
-	}
+	getItems(): TFolder[] { return this.folders; }
+	getItemText(folder: TFolder): string { return folder.path || "/"; }
+	onChooseItem(folder: TFolder): void { this.selection.finish(folder); }
+	onClose(): void { this.selection.deferCancel(); }
 }
-
-/**
- * Open the vault folder picker as a Promise.
- * Returns the selected TFolder, or null if cancelled.
- */
-export function pickVaultFolder(app: App): Promise<TFolder | null> {
-	return new Promise((resolve) => {
-		new VaultFolderModal(app, resolve).open();
-	});
+export function pickVaultFolder(app: App, signal?: AbortSignal): Promise<TFolder | null> {
+	if (signal?.aborted) return Promise.resolve(null);
+	return new Promise(resolve => new VaultFolderModal(app, resolve, signal).open());
 }
-
-/**
- * Modal for selecting a symlink to toggle on/off.
- * Used by the 'toggle-symlink' command.
- */
 export class ToggleSymlinkModal extends FuzzySuggestModal<SymlinkEntry> {
-	private symlinks: SymlinkEntry[];
-	private onSelect: (entry: SymlinkEntry | null) => void;
-	private picked = false;
-
-	constructor(
-		app: App,
-		symlinks: SymlinkEntry[],
-		onSelect: (entry: SymlinkEntry | null) => void,
-	) {
+	private readonly selection: Selection<SymlinkEntry>;
+	constructor(app: App, private readonly symlinks: SymlinkEntry[], onSelect: (entry: SymlinkEntry | null) => void, signal?: AbortSignal) {
 		super(app);
-		this.symlinks = symlinks;
-		this.onSelect = onSelect;
+		this.selection = new Selection(this.modalEl.win, onSelect, () => this.close(), signal);
 		this.setPlaceholder("Choose symlink to toggle...");
 	}
-
-	getItems(): SymlinkEntry[] {
-		return this.symlinks;
-	}
-
-	getItemText(entry: SymlinkEntry): string {
-		const status = entry.enabled ? "(on)" : "(off)";
-		return `${entry.name} ${status}`;
-	}
-
-	onChooseItem(entry: SymlinkEntry): void {
-		this.picked = true;
-		this.onSelect(entry);
-	}
-
-	onClose(): void {
-		setTimeout(() => {
-			if (!this.picked) {
-				this.onSelect(null);
-			}
-		}, 0);
-	}
+	getItems(): SymlinkEntry[] { return this.symlinks; }
+	getItemText(entry: SymlinkEntry): string { return `${entry.name} ${entry.enabled ? "(on)" : "(off)"}`; }
+	onChooseItem(entry: SymlinkEntry): void { this.selection.finish(entry); }
+	onClose(): void { this.selection.deferCancel(); }
 }
-
-/**
- * Open the toggle symlink picker as a Promise.
- * Returns the selected SymlinkEntry, or null if cancelled.
- */
-export function pickSymlinkToToggle(
-	app: App,
-	symlinks: SymlinkEntry[],
-): Promise<SymlinkEntry | null> {
-	return new Promise((resolve) => {
-		new ToggleSymlinkModal(app, symlinks, resolve).open();
-	});
+export function pickSymlinkToToggle(app: App, entries: SymlinkEntry[], signal?: AbortSignal): Promise<SymlinkEntry | null> {
+	if (signal?.aborted) return Promise.resolve(null);
+	return new Promise(resolve => new ToggleSymlinkModal(app, entries, resolve, signal).open());
 }
-
-/**
- * Confirmation modal before deleting a symlink.
- */
 class ConfirmDeleteModal extends Modal {
-	private entryName: string;
-	private onConfirm: (confirmed: boolean) => void;
-	private confirmed = false;
-	private forget: boolean;
-
-	constructor(app: App, entryName: string, onConfirm: (confirmed: boolean) => void, forget = false) {
+	private readonly selection: Selection<boolean>;
+	constructor(app: App, private readonly entryName: string, onConfirm: (confirmed: boolean) => void,
+		private readonly forget: boolean, signal?: AbortSignal) {
 		super(app);
-		this.entryName = entryName;
-		this.forget = forget;
-		this.onConfirm = onConfirm;
+		this.selection = new Selection(this.modalEl.win, value => onConfirm(value === true), () => this.close(), signal);
 	}
-
 	onOpen(): void {
-		const { contentEl } = this;
-		contentEl.createEl("h3", { text: this.forget ? "Forget mapping?" : "Remove symlink?" });
-		contentEl.createEl("p", {
-			text: this.forget ? `Forget "${this.entryName}" from settings only? All existing links will remain untouched.` : `Remove the managed pointer for "${this.entryName}" and its settings entry? Source contents are preserved.`,
-		});
-
-		new Setting(contentEl)
-			.addButton((btn) =>
-				btn.setButtonText("Cancel").onClick(() => this.close()),
-			)
-			.addButton((btn) =>
-				btn
-					.setButtonText(this.forget ? "Forget" : "Remove")
-					.setWarning()
-					.onClick(() => {
-						this.confirmed = true;
-						this.close();
-					}),
-			);
+		this.contentEl.createEl("h3", { text: this.forget ? "Forget mapping?" : "Remove symlink?" });
+		this.contentEl.createEl("p", { text: this.forget
+			? `Forget "${this.entryName}" from settings only? All existing links will remain untouched.`
+			: `Remove the managed pointer for "${this.entryName}" and its settings entry? Source contents are preserved.` });
+		new Setting(this.contentEl)
+			.addButton(b => b.setButtonText("Cancel").onClick(() => this.close()))
+			.addButton(b => b.setButtonText(this.forget ? "Forget" : "Remove").setWarning().onClick(() => {
+				this.selection.finish(true); this.close();
+			}));
 	}
-
-	onClose(): void {
-		this.onConfirm(this.confirmed);
-	}
+	onClose(): void { this.selection.finish(null); }
+}
+export function confirmDelete(app: App, name: string, forget = false, signal?: AbortSignal): Promise<boolean> {
+	if (signal?.aborted) return Promise.resolve(false);
+	return new Promise(resolve => new ConfirmDeleteModal(app, name, resolve, forget, signal).open());
 }
 
-/**
- * Show a delete confirmation modal. Returns true if user confirms.
- */
-export function confirmDelete(app: App, entryName: string, forget = false): Promise<boolean> {
-	return new Promise((resolve) => {
-		new ConfirmDeleteModal(app, entryName, resolve, forget).open();
+/** Native dialogs may outlive plugin unload; detach their result without starting new work. */
+export function cancellable<T>(pending: Promise<T>, signal: AbortSignal, cancelled: T): Promise<T> {
+	return new Promise((resolve, reject) => {
+		const abort = (): void => { signal.removeEventListener("abort", abort); resolve(cancelled); };
+		signal.addEventListener("abort", abort, { once: true });
+		if (signal.aborted) abort();
+		void pending.then(resolve, reject).finally(() => signal.removeEventListener("abort", abort));
 	});
 }

@@ -2,8 +2,8 @@
 	"id": "symlink-manager",
 	"name": "Symlink Manager",
 	"version": "1.0.2",
-	"minAppVersion": "0.15.0",
-	"description": "Manage folder symlinks — link external folders into your vault, toggle them on/off, and manage connections from settings.",
+	"minAppVersion": "1.2.3",
+	"description": "Manage folder symlinks \u2014 link external folders into your vault, toggle them on/off, and manage connections from settings.",
 	"author": "GlassVault",
 	"authorUrl": "https://github.com/glassvault-ai",
 	"isDesktopOnly": true
