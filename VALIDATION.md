@@ -1,6 +1,6 @@
 # Reliability candidate validation
 
-This is an unreleased candidate. The local run on 2026-10-30 used macOS and Node 24.22.1 with a clean `npm ci --ignore-scripts`. All filesystem operations used disposable vault/source/outside directories with sentinels. No installed plugin, real settings, or live Obsidian UI was loaded.
+This is an unreleased candidate. The local run on 2026-10-30 used macOS and Node 24.22.1 with a clean `npm ci --ignore-scripts`. Automated checks used disposable vault/source/outside directories with sentinels, without loading a live installation or real settings. Subsequent manual testing in a separate disposable Obsidian vault exposed the modal field collision described below.
 
 ## Local results
 
@@ -8,7 +8,7 @@ This is an unreleased candidate. The local run on 2026-10-30 used macOS and Node
 | --- | --- |
 | `npm run typecheck` | Passed |
 | `npm run lint` | Zero errors; three compatibility warnings described below |
-| `npm test` | 91 tests: 89 passed, 2 native-platform skips, zero failures |
+| `npm test` | 97 tests: 95 passed, 2 native-platform skips, zero failures |
 | `npm audit` | Zero reported vulnerabilities at the time of the run; not a guarantee against unknown vulnerabilities |
 | `npm run build` | Two in-memory production builds have identical bytes; assets and hashes written to a fresh temporary candidate directory |
 | Manual workflow definition | Parsed and checked offline: three OS runners, pinned action commits, restricted permissions, explicit attestation/upload input defaulting to false; not executed |
@@ -17,6 +17,14 @@ This is an unreleased candidate. The local run on 2026-10-30 used macOS and Node
 Plugin integration tests load the production build configuration, including minification, into a mocked Obsidian/Electron host. Core tests use real macOS filesystem calls plus injected faults. Mocked UI tests do not establish native Electron or Obsidian compatibility. Test fixture cleanup checks sentinels before deleting its own temporary root.
 
 The pinned current linter enables `obsidianmd/no-unsupported-api`. The candidate floor is **1.2.3**, required by the component `setDisabled` APIs, beyond the original tooltip's 1.1.0 requirement. Three unsuppressed warnings remain: `setWarning` deprecation, imperative settings `display` deprecation, and missing 1.13 settings-search definitions. The existing APIs retain support for pre-1.13 hosts; newer settings search is not claimed. Actual minimum/current-host testing remains a gate.
+
+## Native smoke correction
+
+The first manual add attempt reached the real source and destination pickers but failed when closing the destination modal: `this.selection.attach is not a function`. The original snapshots remained empty at revision 1, no pointer was created, and all fixture sentinels stayed unchanged. Static inspection of the installed Obsidian bundle confirms that base `Modal` owns `selection`, replaces it during open with saved text selection/focus, and consumes it during close. TypeScript's private modifier did not isolate the plugin's same-named field at runtime.
+
+The narrow correction renames the plugin settlement owner to `symlinkSelection` in the folder, toggle and confirmation subclasses. Settlement logic, deferred close-before-choose, timers, cancellation and host focus restoration are preserved. The host mock now reproduces base ownership and the close-before-choose call chain. Six regressions cover all three modals with host selection restoration enabled and disabled; the unchanged candidate failed those tests before the repair. The earlier mock never assigned that host field, which explains the coverage gap.
+
+This correction has not yet replaced the disposable-vault assets or passed a new native GUI attempt. Prior candidates and the failed fixture state are preserved for comparison. Automated passes are not a native GUI pass.
 
 ## Corrective round
 
@@ -69,7 +77,7 @@ The stale settings regression awaits and asserts the control's own requested-sta
 | Windows junctions | Native test prepared; skipped because host is macOS. No native Windows result. |
 | Linux aliases | Native test prepared; skipped because host is macOS. No native Linux result. |
 | UNC/network/removable volumes | Not tested. Requires authorized native fixtures; asynchronous fault tests are not substitutes. |
-| Obsidian 1.2.3/current desktop GUI | Not tested. No isolated GUI automation host was configured. Nonempty settings, native folder picker, popouts, focus/Escape/click-outside and enable/disable/reload require disposable-host verification. |
+| Obsidian desktop GUI | Initial disposable macOS smoke reached the real source/destination pickers and exposed the modal field collision. The new correction awaits a native rerun. Minimum-host, nonempty settings, complete create/toggle/rename/remove/reload and popout/focus/Escape/click-outside verification remain open. |
 | Hardware power loss/full disk/OS-level read-only volumes | Not tested. Logical persistence faults exercised; actual power-cut ordering and device-specific errors remain unverified. |
 
 ## Review and release gates

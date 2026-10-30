@@ -31,3 +31,19 @@ test('opening in another window moves modal cancellation ownership',async t=>{
  assert.equal(f.modals[0].modalEl.win,owner);owner.emit('pagehide');assert.equal(await pending,false);
  assert.equal(owner.listeners.size,0);assert.equal(f.plugin.entries.length,0);
 });
+
+for(const kind of ['folder','toggle','confirmation'])for(const restore of [true,false])test(`${kind} modal preserves base-owned selection with restoration ${restore}`,async t=>{
+ const f=await loaded(t),e=f.entry();f.app.restoreSelection=restore;
+ if(kind!=='folder')await f.plugin.addSymlink(e);
+ f.electron.remote.dialog.showOpenDialog=async()=>({canceled:false,filePaths:[f.source]});
+ const pending=kind==='folder'?f.plugin.createSymlinkFromPicker():kind==='toggle'?f.plugin.commands.find(c=>c.id==='toggle-symlink').callback():f.plugin.confirmRemoval(e.id,e.name);
+ await until(()=>f.modals.length);const modal=f.modals[0],saved=modal.selection;
+ if(restore){assert.equal(saved.win,modal.modalEl.win);assert.equal(saved.range,null);assert(saved.focusEl);}else assert.equal(saved,null);
+ if(kind==='confirmation')modal.contentEl.controls.find(c=>c.label==='Remove').click();
+ else modal.selectSuggestion({item:modal.getItems()[0]});
+ assert.equal(await pending,true);assert.equal(modal.selection,saved);if(restore)assert.equal(modal.restoredSelection,saved);
+ assert.equal(modal.modalEl.win.listeners.size,0);
+ if(kind==='folder'){assert.equal(f.plugin.entries.length,1);assert.equal((await fs.lstat(path.join(f.vault,'source'))).isSymbolicLink(),true);}
+ else if(kind==='toggle'){assert.equal(f.plugin.entries[0].enabled,false);await assert.rejects(fs.lstat(path.join(f.vault,'link')),{code:'ENOENT'});}
+ else{assert.equal(f.plugin.entries.length,0);await assert.rejects(fs.lstat(path.join(f.vault,'link')),{code:'ENOENT'});}
+});
