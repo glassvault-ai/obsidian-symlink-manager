@@ -7,13 +7,13 @@ tags:
 - reliability
 scope: project
 created_at: 2026-10-30T20:59:07.747942Z
-updated_at: 2026-10-30T21:02:02.196853054Z
+updated_at: 2026-10-30T22:00:20.368979726Z
 created_by: ai-agent
 ---
 
 Filesystem changes and settings writes are not one transaction. If removal succeeds and settings persistence fails, old active metadata can recreate the link on startup. The reliability design commits operation intent before mutation and retains it until the resulting filesystem state is durably acknowledged.
 
-Two validated metadata generations preserve recovery evidence independently of legacy data.json. Startup recognizes completed operations from expected link identities and treats ambiguous or corrupt recovery data as read-only. It never silently replays an older generation or falls back to legacy settings after migration. This costs an explicit recovery component but avoids treating in-memory rollback as durability.
+Two validated metadata generations preserve recovery evidence independently of legacy data.json. Startup recognizes completed operations from expected link identities and treats ambiguous or corrupt recovery data as read-only. While any initialization evidence remains, it never silently replays an older generation or falls back to legacy settings after migration. Deleting every initialization artifact destroys that evidence and permits first-import behavior again; this operating limit is distinct from partial-corruption recovery. This costs an explicit recovery component but avoids treating in-memory rollback as durability.
 
 All UI, command and startup operations share one serialized coordinator. A failed final commit blocks further mutations until recovery, so a later request cannot erase unfinished intent. The original save path in src/main.ts:76-77 has no such contract.
 

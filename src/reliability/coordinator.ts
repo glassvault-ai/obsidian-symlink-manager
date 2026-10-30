@@ -54,11 +54,16 @@ export class Coordinator {
 				if (this.data.vaultRoot !== root) throw new RecoveryError("This recovery state belongs to a different vault location; no filesystem changes were made", this.data);
 				await this.reconcile();
 			} catch (error) {
-				if (error instanceof RecoveryError && error.lastGood) this.data = error.lastGood;
-				this.persistenceFailed = true;
-				this.error = healthError(error).message;
+				await this.showRecovery(error);
 			}
 		});
+	}
+	private async showRecovery(error: unknown): Promise<void> {
+		if (error instanceof RecoveryError && error.lastGood) this.data = error.lastGood;
+		this.persistenceFailed = true;
+		this.error = healthError(error).message;
+		// Observations explain the saved entries without reconciling pointers or writing state.
+		await this.observe();
 	}
 	private async observe(): Promise<void> {
 		this.health.clear();
@@ -72,7 +77,7 @@ export class Coordinator {
 				this.data = loaded; this.persistenceFailed = false; this.error = null;
 				await this.reconcile();
 			} catch (error) {
-				this.persistenceFailed = true; this.error = healthError(error).message;
+				await this.showRecovery(error);
 			}
 		});
 	}

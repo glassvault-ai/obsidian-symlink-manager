@@ -80,6 +80,7 @@ export default class SymlinkManagerPlugin extends Plugin {
 			if (!entries.length) return { success: false, message: "No symlinks to toggle" };
 			const selected = await pickSymlinkToToggle(this.app, entries, this.lifetime.signal);
 			if (this.unloaded || !selected) return { success: false, message: "" };
+			// Apply the inverse of the displayed label, even if a newer action already reached it.
 			return this.engine().setEnabled(selected.id, !selected.enabled);
 		});
 	}

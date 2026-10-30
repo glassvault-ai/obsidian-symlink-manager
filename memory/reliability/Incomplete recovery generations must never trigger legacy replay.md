@@ -7,13 +7,13 @@ tags:
 - reliability
 scope: project
 created_at: 2026-10-30T21:07:32.160228Z
-updated_at: 2026-10-30T21:26:33.337775339Z
+updated_at: 2026-10-30T21:58:20.849286637Z
 created_by: ai-agent
 ---
 
 A separate symlink-manager-state.initialized marker beside the recovery directory marks an attempted migration. It is exclusively created and flushed before directory initialization. Directory loss with that marker present is read-only recovery, not a new legacy import. Both metadata slots are required, including two equal initial generations. A crash between creating them therefore opens read-only recovery instead of importing legacy settings again. Later commits alternate slots, preserving adjacent revisions and checking each checksum and state schema before using it.
 
-Treating a missing or corrupt slot as permission to use the other slot is unsafe: the unavailable slot could contain the newer removal intent, so replaying an older enabled entry could resurrect a link. The manager exposes the last readable state for review while refusing mutations when commit ordering is ambiguous. Temporary files are evidence of interrupted writes, never committed generations.
+Treating a missing or corrupt slot as permission to use the other slot is unsafe: the unavailable slot could contain the newer removal intent, so replaying an older enabled entry could resurrect a link. The manager exposes the newest individually validated snapshot and observed link health for review while refusing mutations when commit ordering is ambiguous. A missing or invalid initialization marker removes mutation authority, not visibility: readable snapshots remain recovery evidence, never permission to reconcile, rewrite metadata or call the legacy importer. The same read-only view applies at startup and Refresh. Temporary files are evidence of interrupted writes, never committed generations.
 
 The contract lives in src/reliability/store.ts:50 and is exercised by tests/recovery.test.cjs. POSIX initialization flushes the plugin parent directory so the marker and recovery directory entries precede pointer mutations; Windows has only file-flush guarantees. Legacy data.json remains untouched. Deleting every candidate metadata artifact removes all evidence of migration and cannot be distinguished from first installation; users must not reset metadata while retaining stale legacy data. This intentionally makes recovery conservative and requires explicit repair rather than silently guessing at user intent.
 

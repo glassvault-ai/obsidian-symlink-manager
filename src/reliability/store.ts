@@ -64,21 +64,26 @@ export class SnapshotStore implements Storage {
 	}
 	private async scan(): Promise<{ latest: Snapshot; token: string } | null> {
 		const directory = await this.directory();
-		const initialized = await this.initialized(directory);
+		let initialized = false;
+		let markerError: Error | null = null;
+		try { initialized = await this.initialized(directory); }
+		catch (error) { markerError = error instanceof Error ? error : new RecoveryError("Initialization marker could not be validated"); }
 		try {
 			const stat = await fs.lstat(directory);
 			if (!stat.isDirectory() || stat.isSymbolicLink()) throw new RecoveryError("Recovery directory is not a real directory");
 		} catch (error) {
 			if (errorCode(error) === "ENOENT") {
+				if (markerError) throw markerError;
 				if (initialized) throw new RecoveryError("Recovery directory is missing after initialization; legacy replay is blocked");
 				return null;
 			}
 			throw error;
 		}
-		if (!initialized) throw new RecoveryError("Initialization marker is missing; preserve recovery files before repair");
 		const outcomes = await Promise.allSettled(["a.json", "b.json"].map(n => this.readSlot(path.join(directory, n))));
 		const good = outcomes.flatMap(r => r.status === "fulfilled" ? [r.value] : []).sort((a,b) => b.revision-a.revision);
 		const latest = good[0];
+		// Missing authority must not hide validated recovery evidence or authorize replay.
+		if (markerError || !initialized) throw new RecoveryError(markerError?.message ?? "Initialization marker is missing; preserve recovery files before repair", latest?.state ?? null);
 		if (outcomes.some(r => r.status === "rejected")) throw new RecoveryError("Recovery files are incomplete or unreadable; preserve them and repair storage before continuing", latest?.state ?? null);
 		const older = good[1];
 		if (!latest || !older || latest.revision - older.revision > 1 || (latest.revision === older.revision && latest.checksum !== older.checksum)) throw new RecoveryError("Ambiguous recovery generations", latest?.state ?? null);

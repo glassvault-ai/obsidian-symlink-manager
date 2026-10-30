@@ -124,8 +124,43 @@ test('loss of the entire recovery directory cannot replay stale legacy settings'
  let legacyReads=0;const m=new Coordinator(new LinkFiles(f.vault),new SnapshotStore(f.plugin));await m.open(async()=>{legacyReads++;return {symlinks:[{...e,active:true}]};});
  assert.equal(m.readOnly,true);assert.equal(legacyReads,0);await assert.rejects(fs.lstat(path.join(f.vault,'link')),{code:'ENOENT'});
 });
-for(const damage of ['missing','corrupt'])test(`initialization marker ${damage} blocks mutation`,async t=>{
- const f=await setup(t),e=f.entry();await f.manager.add(e);const marker=path.join(f.plugin,'symlink-manager-state.initialized');
+for(const damage of ['missing','corrupt'])test(`initialization marker ${damage} exposes entries and health without mutation`,async t=>{
+ const f=await setup(t),e=f.entry();await f.manager.add(e);const directory=path.join(f.plugin,'symlink-manager-state'),marker=directory+'.initialized',pointer=path.join(f.vault,'link');
  if(damage==='missing')await fs.unlink(marker);else await fs.writeFile(marker,'partial');
- const m=await f.reopen();assert.equal(m.readOnly,true);assert.equal((await fs.lstat(path.join(f.vault,'link'))).isSymbolicLink(),true);
+ const slots=await Promise.all(['a.json','b.json'].map(name=>fs.readFile(path.join(directory,name),'utf8'))),inode=(await fs.lstat(pointer)).ino,text=await fs.readlink(pointer);
+ let legacyReads=0,writes=0;const store=new SnapshotStore(f.plugin);store.initialize=store.commit=async()=>{writes++;throw Error('read-only recovery must not write');};
+ const m=new Coordinator(new LinkFiles(f.vault),store);await m.open(async()=>{legacyReads++;return null;});
+ for(const refresh of [false,true]){
+  if(refresh)await m.refresh();
+  assert.equal(m.readOnly,true);assert.match(m.error,/marker/);assert.equal(m.entries.length,1);assert.equal(m.entries[0].id,e.id);assert.equal(m.entries[0].enabled,true);assert.equal(m.health.get(e.id).kind,'matching');
+  assert.equal((await m.setEnabled(e.id,false)).success,false);assert.equal((await m.remove(e.id)).success,false);assert.equal((await m.forget(e.id)).success,false);
+  assert.equal((await fs.lstat(pointer)).ino,inode);assert.equal(await fs.readlink(pointer),text);
+ }
+ assert.equal(legacyReads,0);assert.equal(writes,0);assert.deepEqual(await Promise.all(['a.json','b.json'].map(name=>fs.readFile(path.join(directory,name),'utf8'))),slots);assert.deepEqual((await fs.readdir(directory)).sort(),['a.json','b.json']);
+ if(damage==='missing')await assert.rejects(fs.lstat(marker),{code:'ENOENT'});else assert.equal(await fs.readFile(marker,'utf8'),'partial');
+ for(const folder of [f.vault,f.source,f.outside])assert.equal(await fs.readFile(path.join(folder,'sentinel'),'utf8'),'unchanged');
+});
+
+test('invalid marker with one corrupt snapshot exposes only validated evidence read-only',async t=>{
+ const f=await setup(t),e=f.entry();await f.manager.add(e);const directory=path.join(f.plugin,'symlink-manager-state');await fs.writeFile(directory+'.initialized','invalid');await fs.writeFile(path.join(directory,'b.json'),'broken');
+ const m=await f.reopen();assert.equal(m.readOnly,true);assert.equal(m.entries[0].id,e.id);assert.equal(m.health.get(e.id).kind,'matching');assert.equal((await m.setEnabled(e.id,false)).success,false);
+ assert.equal(await fs.readFile(path.join(directory,'b.json'),'utf8'),'broken');assert.equal((await fs.lstat(path.join(f.vault,'link'))).isSymbolicLink(),true);
+});
+test('documented operating limit: marker-first full wipe reimports stale legacy and recreates only the pointer',async t=>{
+ const f=await fixture(t),plugin=path.join(f.root,'plugin'),e=f.entry();await fs.mkdir(plugin);
+ const legacyFile=path.join(plugin,'data.json'),legacyText=JSON.stringify({symlinks:[{...e,active:true}]});await fs.writeFile(legacyFile,legacyText);let legacyReads=0;
+ const reopen=async()=>{const m=new Coordinator(new LinkFiles(f.vault),new SnapshotStore(plugin));await m.open(async()=>{legacyReads++;return JSON.parse(await fs.readFile(legacyFile,'utf8'));});return m;};
+ const original=await reopen();assert.equal(legacyReads,1);assert.equal((await original.remove(e.id)).success,true);await assert.rejects(fs.lstat(path.join(f.vault,'link')),{code:'ENOENT'});
+ const directory=path.join(plugin,'symlink-manager-state');await fs.unlink(directory+'.initialized');const snapshots=await Promise.all(['a.json','b.json'].map(name=>fs.readFile(path.join(directory,name),'utf8')));
+ const partial=await reopen();assert.equal(partial.readOnly,true);assert.equal(partial.entries.length,0);assert.equal(legacyReads,1);await assert.rejects(fs.lstat(path.join(f.vault,'link')),{code:'ENOENT'});assert.deepEqual(await Promise.all(['a.json','b.json'].map(name=>fs.readFile(path.join(directory,name),'utf8'))),snapshots);
+ // Deliberate destruction of this fixture's entire recovery authority; not a supported reset.
+ for(const name of ['a.json','b.json'])await fs.unlink(path.join(directory,name));await fs.rmdir(directory);
+ const wiped=await reopen();assert.equal(legacyReads,2);assert.equal(wiped.readOnly,false);assert.equal(wiped.entries[0].enabled,true);assert.equal(wiped.health.get(e.id).kind,'matching');assert.equal((await fs.lstat(path.join(f.vault,'link'))).isSymbolicLink(),true);
+ assert.equal(await fs.readFile(legacyFile,'utf8'),legacyText);for(const folder of [f.vault,f.source,f.outside])assert.equal(await fs.readFile(path.join(folder,'sentinel'),'utf8'),'unchanged');
+ t.diagnostic('Known full-wipe limitation reproduced: stale legacy recreates a pointer; no source-content deletion. Partial marker deletion stayed read-only without replay.');
+});
+
+test('read-only marker recovery observes absent pointers without recreating them',async t=>{
+ const f=await setup(t),e=f.entry();await f.manager.add(e);await fs.unlink(path.join(f.vault,'link'));await fs.unlink(path.join(f.plugin,'symlink-manager-state.initialized'));
+ const m=await f.reopen();assert.equal(m.readOnly,true);assert.equal(m.entries[0].enabled,true);assert.equal(m.health.get(e.id).kind,'absent');await m.refresh();assert.equal(m.readOnly,true);assert.equal(m.health.get(e.id).kind,'absent');await assert.rejects(fs.lstat(path.join(f.vault,'link')),{code:'ENOENT'});
 });

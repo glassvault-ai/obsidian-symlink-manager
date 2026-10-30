@@ -7,10 +7,13 @@ tags:
 - reliability
 scope: project
 created_at: 2026-10-30T21:10:36.466525Z
+updated_at: 2026-10-30T21:58:20.849784849Z
 created_by: ai-agent
 ---
 
 A toggle displayed in settings can be stale after a command or bulk action changes the model. Inverting the current value when the old control fires can reverse the latest intent. The control must submit the enabled or disabled value that the user selected, while the coordinator serializes and revalidates the request.
+
+The command modal similarly applies the inverse of the enabled label shown when it opened. If another action already reached that value while the modal was open, selection is idempotent; it does not invert an unseen newer value. Entry identity and filesystem safety are still revalidated when the request executes. Regression assertions must await the control request itself before any bulk operation, because a later bulk request can mask an inversion defect.
 
 Visible settings subscribe to model changes and show health separately from the preference. Renames, failed rollback, commands and recovery completion refresh the same view. Pending operations expose explicit recovery choices; Forget removes metadata only and leaves all filesystem pointers untouched. This also gives a safe escape from a foreign-pointer conflict without treating a symlink type check as ownership.
 

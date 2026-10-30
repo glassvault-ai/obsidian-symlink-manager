@@ -11,9 +11,11 @@
 
 Phases 0–5 are implemented on the feature branch. Phase commits through Phase 4 are dfea2d3, f31eac9, 3073eb0, d7e39fb and 5d9f083; Phase 5 carries packaging, final regression coverage and the validation ledger. The candidate API floor resolved to 1.2.3 after checking newly used controls. The persistence contract includes a separate durable initialization marker so loss of the entire snapshot directory cannot silently reimport legacy settings. Root identity binding and post-open modal-window binding were strengthened during final validation.
 
-Local validation is recorded in VALIDATION.md: 84 passing tests, two native-platform skips, typecheck success, zero lint errors with three documented compatibility warnings, and zero reported dependency vulnerabilities. Native GUI/platform/device gaps, pending provenance execution and unknown owner-dashboard eligibility remain explicit gates. Release metadata intentionally remains blocked until a separately approved new version/mapping is selected. Existing main ref and protected ignored artifacts remain unchanged.
+Local validation is recorded in VALIDATION.md: 89 passing tests, two native-platform skips, typecheck success, zero lint errors with three documented compatibility warnings, and zero reported dependency vulnerabilities. Native GUI/platform/device gaps, pending provenance execution and unknown owner-dashboard eligibility remain explicit gates. Release metadata intentionally remains blocked until a separately approved new version/mapping is selected. Existing main ref and protected ignored artifacts remain unchanged.
 
-**Wrap-up has not been executed. STOP for final review.**
+An authorized corrective round after Phase 5 preserves last-readable entries and observed health when the initialization marker is missing/invalid, while keeping all recovery authority read-only. It tightens stale-control evidence, documents/tests command snapshot semantics, and explicitly reproduces the marker-first full-wipe operating limit without changing first-import UX. Original c7b56c59 candidate/evidence remains preserved; the correction is a separate commit/candidate for one corrective review.
+
+**Wrap-up has not been executed. STOP for corrective review before disposable GUI testing.**
 
 ## Purpose
 

@@ -11,7 +11,10 @@ test('candidate plugin routes create, commands, rename and settings through reco
 });
 test('a stale settings toggle applies its requested value rather than inverting newer state',async t=>{
  const f=await loaded(t),e=f.entry();await f.plugin.addSymlink(e);f.plugin.settingTab.display();const old=f.plugin.settingTab.containerEl.controls.find(c=>c.kind==='toggle');
- await f.plugin.setSymlinkEnabled(e.id,false);old.change(false);await f.plugin.manager.setAll(false);assert.equal(f.plugin.entries[0].enabled,false);
+ await f.plugin.setSymlinkEnabled(e.id,false);
+ const apply=f.plugin.setSymlinkEnabled.bind(f.plugin);let requested;
+ f.plugin.setSymlinkEnabled=(...args)=>(requested=apply(...args));old.change(false);assert(requested);await requested;
+ assert.equal(f.plugin.entries[0].enabled,false);await assert.rejects(fs.lstat(path.join(f.vault,e.name)),{code:'ENOENT'});
 });
 test('startup traversal records cannot write outside vault and root slash migrates',async t=>{
  const f=await fixture(t);await fs.mkdir(path.join(f.vault,'.obsidian/plugins/symlink-manager'),{recursive:true});
@@ -19,3 +22,12 @@ test('startup traversal records cannot write outside vault and root slash migrat
  assert.equal(h.plugin.manager.quarantineCount,1);assert.equal(h.plugin.entries[0].vaultPath,'');await assert.rejects(fs.lstat(path.join(f.root,'link')),{code:'ENOENT'});
 });
 test('native folder picker cancellation performs no mutations',async t=>{const f=await loaded(t);assert.equal(await f.plugin.createSymlinkFromPicker(),false);assert.equal(f.plugin.entries.length,0);});
+
+for(const displayed of [true,false])test(`command modal applies inverse of displayed ${displayed} after newer state changes`,async t=>{
+ const f=await loaded(t),e=f.entry();await f.plugin.addSymlink(e);if(!displayed)await f.plugin.setSymlinkEnabled(e.id,false);
+ const command=f.plugin.commands.find(c=>c.id==='toggle-symlink').callback();
+ for(let i=0;i<30&&!f.modals.length;i++)await new Promise(setImmediate);
+ assert.equal(f.modals.length,1);const modal=f.modals[0],selected=modal.getItems()[0];assert.equal(selected.enabled,displayed);assert.match(modal.getItemText(selected),displayed?/\(on\)/:/\(off\)/);
+ await f.plugin.setSymlinkEnabled(e.id,!displayed);modal.onClose();modal.onChooseItem(selected);assert.equal(await command,true);assert.equal(f.plugin.entries[0].enabled,!displayed);
+ if(displayed)await assert.rejects(fs.lstat(path.join(f.vault,e.name)),{code:'ENOENT'});else assert.equal((await fs.lstat(path.join(f.vault,e.name))).isSymbolicLink(),true);
+});
