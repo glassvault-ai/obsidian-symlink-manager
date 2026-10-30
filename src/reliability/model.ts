@@ -39,6 +39,7 @@ export function validVaultPath(value: unknown): value is string {
 		&& !path.win32.isAbsolute(value) && value.split("/").every(validName)));
 }
 export function parseEntry(value: unknown, legacy = false): Entry | null {
+	if (legacy && record(value) && value.vaultPath === "/") value = { ...value, vaultPath: "" };
 	if (!record(value) || typeof value.id !== "string" || !value.id.trim()
 		|| !validName(value.name) || !validVaultPath(value.vaultPath)
 		|| typeof value.sourcePath !== "string" || !path.isAbsolute(value.sourcePath)
@@ -80,6 +81,9 @@ export function parseState(value: unknown): State {
 			|| (p.kind === "remove" ? !before || after !== null : !after)
 			|| (p.kind === "rename" && (!before || before.id !== after?.id))
 			|| (before && after && before.id !== after.id)) throw new SafetyError("error", "Invalid pending operation entries");
+		if (after && !entries.some(e => e?.id === after.id && JSON.stringify(e) === JSON.stringify(after))) throw new SafetyError("error", "Pending intent disagrees with desired state");
+		if (p.kind === "remove" && entries.some(e => e?.id === before?.id)) throw new SafetyError("error", "Removal intent still contains its entry");
+		if (p.kind === "rename" && before && after && (before.sourcePath !== after.sourcePath || before.vaultPath !== after.vaultPath || before.enabled !== after.enabled)) throw new SafetyError("error", "Rename intent changes more than the name");
 		pending = { kind: p.kind as Pending["kind"], before, after };
 	}
 	return { schema: 2, vaultRoot: value.vaultRoot, entries: entries as Entry[], quarantine: value.quarantine as Quarantined[], pending };
