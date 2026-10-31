@@ -3,6 +3,22 @@ name: Reviewed candidate validation
 on:
   workflow_dispatch:
     inputs:
+      expected_commit:
+        description: 'Reviewed source commit (full 40-character SHA)'
+        type: string
+        required: true
+      expected_main_sha256:
+        description: 'Reviewed main.js SHA-256'
+        type: string
+        required: true
+      expected_manifest_sha256:
+        description: 'Reviewed manifest.json SHA-256'
+        type: string
+        required: true
+      expected_styles_sha256:
+        description: 'Reviewed styles.css SHA-256'
+        type: string
+        required: true
       attest:
         description: 'Explicitly authorize candidate attestation and artifact upload after review'
         type: boolean
@@ -29,7 +45,18 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
-      - run: npm run build
+      - run: npm run release:check
+      - id: candidate
+        shell: bash
+        run: node scripts/candidate.mjs --github-output >> "$GITHUB_OUTPUT"
+      - run: node scripts/verify-candidate.mjs "$CANDIDATE_DIRECTORY"
+        shell: bash
+        env:
+          CANDIDATE_DIRECTORY: ${{ steps.candidate.outputs.directory }}
+          EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+          EXPECTED_MAIN_SHA256: ${{ inputs.expected_main_sha256 }}
+          EXPECTED_MANIFEST_SHA256: ${{ inputs.expected_manifest_sha256 }}
+          EXPECTED_STYLES_SHA256: ${{ inputs.expected_styles_sha256 }}
   attest-candidate:
     needs: validate
     if: ${{ inputs.attest }}
@@ -47,12 +74,21 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run release:check
       - id: candidate
         run: node scripts/candidate.mjs --github-output >> "$GITHUB_OUTPUT"
+      - run: node scripts/verify-candidate.mjs "$CANDIDATE_DIRECTORY"
+        env:
+          CANDIDATE_DIRECTORY: ${{ steps.candidate.outputs.directory }}
+          EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+          EXPECTED_MAIN_SHA256: ${{ inputs.expected_main_sha256 }}
+          EXPECTED_MANIFEST_SHA256: ${{ inputs.expected_manifest_sha256 }}
+          EXPECTED_STYLES_SHA256: ${{ inputs.expected_styles_sha256 }}
       - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
         with:
           subject-path: |
             ${{ steps.candidate.outputs.directory }}/main.js
+            ${{ steps.candidate.outputs.directory }}/manifest.json
             ${{ steps.candidate.outputs.directory }}/styles.css
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

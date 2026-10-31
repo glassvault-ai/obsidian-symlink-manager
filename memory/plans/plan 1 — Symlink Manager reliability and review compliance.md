@@ -23,7 +23,7 @@ The unsuccessful focus attempt labeled renamed-from-settings is not counted as a
 
 Minimum-version/second-Mac GUI acceptance, broader popout/focus/cancellation, native real-directory conflicts, Windows/Linux/UNC/removable volumes and hardware power loss remain gates. Full metadata-wipe safety is not claimed; the known legacy-reimport limit, release version mapping, provenance execution and owner-dashboard eligibility remain unresolved.
 
-**Wrap-up has not been executed. STOP; no further app, source, release or public actions authorized by this ledger update.**
+**Wrap-up has not been executed. Release/install preparation is authorized by the bounded checkpoint below; external publication and live replacement remain held for readiness review.**
 
 ## Purpose
 
@@ -365,6 +365,22 @@ Finish B4/B5 preparation and the platform matrix, then deliver a reviewable cand
 **Validation:** Run the full bounded project correctness suite, typecheck/lint and candidate build checks once after final changes. Verify original main branch pointer and ignored artifact hashes. Validate CI definition offline; real attestations and distribution status remain external. Supervisor review decides whether unavailable platform/UI runs block final sign-off; never call those tests passed.
 
 **Does not touch:** Pushes, GitHub workflow execution, remote artifact upload, new attestations on existing public assets, release/version publication, merge, live replacement, new submission, or owner-account changes.
+
+---
+
+### Release/install readiness checkpoint — 1.0.3 preparation
+
+**Scope:** Prepare patch 1.0.3 with manifest/package/lockfile/version-history agreement, a truthful changelog and upgrade/recovery guidance. Keep runtime source identical to native-tested cb323280 and produce a separately identified, reproducible three-asset candidate. Stage manual provenance verification that binds the expected source commit and all three asset hashes before attestation/upload. Inspect only the current installation's metadata shape read-only, then validate relevant first-import behavior with deidentified disposable data. Never follow or operate on saved real source paths during preparation.
+
+**Workflow:**
+1. Query/read release and persistence notes, existing plan/skills and current requirements before editing. Record only architectural facts in public memory; keep installation identity/private paths in external evidence.
+2. Prepare version 1.0.3 and minAppVersion 1.2.3 mapping, preserving published historical entries. Explain recovery files, full-wipe replay, downgrade risk and native coverage honestly.
+3. Read installed legacy settings shape without changing it. Reproduce applicable migration shape only in disposable fixtures; reuse completed correctness/native results where runtime bytes are unchanged.
+4. Validate release metadata, dependency-lock agreement, reproducible asset hashes and the manual provenance workflow offline. Verify expected-identity/hash mismatch rejection. Do not trigger CI, upload, tag or publish.
+5. Commit bounded preparation with relevant notes; build only to fresh temporary/evidence directories. Verify main and protected ignored artifacts, installed plugin/settings, and prior candidates remain unchanged.
+6. Deliver final commit/diffs/hashes, gate status and concrete installation recommendation for readiness review. STOP before push, merge, tag/release, workflow execution, live replacement or actual migration. No new independent review or broad feature work.
+
+**Acceptance and open gates:** 1.0.3 is prepared, not published. Installation after approval must preserve a same-vault backup of old assets/settings and never import another vault's mappings. Minimum-version, second-Mac, Windows/Linux/UNC/removable-volume, broader modal and hardware-loss coverage remain explicitly open. A total wipe of initialization evidence can still replay stale legacy data. Provenance and directory eligibility require separately approved external work. Wrap-up status/archive/merge/push steps remain deferred until installation/merge and final authorization; no plan completion is implied by this checkpoint.
 
 ---
 

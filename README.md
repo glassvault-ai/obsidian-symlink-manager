@@ -2,11 +2,11 @@
 
 Link an external directory into an Obsidian desktop vault and manage its pointer from settings. Edits to linked notes change the original files. Disabling or removing a managed link removes its pointer, not its source contents.
 
-This branch is an unreleased reliability candidate. Published 1.0.2 has different persistence and safety behavior. The public directory currently exposes a disabled install control; a listing or download count does not establish current installability. This candidate has not been published or approved for deployment.
+Version **1.0.3** is prepared for release; publication and installation approval are still pending. It fixes reliability and modal failures in 1.0.2. See [CHANGELOG.md](CHANGELOG.md) for changes and upgrade cautions. The last verified directory observation (2026-10-30) showed a disabled install control; publication alone does not establish current directory eligibility.
 
 ## Requirements and limits
 
-- Candidate API minimum: Obsidian **1.2.3**, including the settings controls used here. Actual minimum-version UI validation is still required before a release. The imperative dashboard supports older hosts; it does not yet integrate with the settings search introduced in 1.13.
+- API minimum: Obsidian **1.2.3**, including the settings controls used here. Actual minimum-version UI validation is still required before a release. The imperative dashboard supports older hosts; it does not yet integrate with the settings search introduced in 1.13.
 - Desktop only. The implementation uses directory symlinks on macOS/Linux and junctions on Windows. Native validation status is recorded in [VALIDATION.md](VALIDATION.md); an implemented Windows path is not proof that every Windows volume is tested.
 - Sources must be accessible directories, disjoint from the vault and other configured sources. Canonical aliases and overlapping source roots are rejected. A destination must be a real folder beneath the vault's canonical root; placing links inside an existing linked folder is rejected.
 - Portable names exclude dot/dot-dot, separators, reserved device names, trailing periods/spaces and control characters. Destination names are reserved case-insensitively for portability; source identity does not blindly lowercase paths.
@@ -16,7 +16,7 @@ This branch is an unreleased reliability candidate. Published 1.0.2 has differen
 
 ## Use
 
-Run **Link external folder**, or use the ribbon link icon, to choose a source and destination. Root placement is supported. Settings provide:
+Run **Link external folder**, or use the ribbon link icon, to choose a source and destination. In the destination picker, `/` means the top level of the current vault; it is not the operating-system root. A new vault without subfolders shows only that option. Settings provide:
 
 - **Enabled preference:** the desired state, separate from the displayed filesystem health.
 - **Refresh:** check sources and retry saved preferences. An unavailable source retains its entry and enabled preference; startup and Refresh retry when it returns. There is no background polling.
@@ -29,7 +29,7 @@ Commands also enable/disable all entries, select an entry to toggle, and refresh
 
 ## Recovery and migration
 
-On a candidate's first load, valid legacy `data.json` entries are imported without changing that file. Invalid records are retained for review rather than acted upon. Thereafter the plugin uses two checksummed metadata generations in its own `symlink-manager-state` directory, with a separate `symlink-manager-state.initialized` marker beside it. Intent is committed before any link mutation. If final persistence fails, further mutations stop until Refresh can reconcile the pending operation.
+On the first 1.0.3 load, valid legacy `data.json` entries are imported without changing that file. Invalid records are retained for review rather than acted upon. Thereafter the plugin uses two checksummed metadata generations in its own `symlink-manager-state` directory, with a separate `symlink-manager-state.initialized` marker beside it. Intent is committed before any link mutation. If final persistence fails, further mutations stop until Refresh can reconcile the pending operation.
 
 A missing, unreadable, corrupt or unsupported recovery snapshot or initialization marker makes the manager read-only. When snapshots remain readable, their saved entries and observed health stay visible for recovery review; displaying them does not authorize replay or repair. It does **not** import old settings again or silently replay an older generation. Preserve the original legacy file, initialization marker, both snapshots and any temporary metadata evidence before attempting repair. Work from copies in a disposable vault and report the error without publishing private source paths. The marker prevents an entirely missing recovery directory from looking like first installation. Do not delete all recovery metadata while retaining stale legacy settings: loss of every initialization artifact is indistinguishable from a fresh install and can recreate a previously removed pointer from stale legacy data. Removing only the marker stays read-only; removing the remaining recovery directory afterward crosses this full-wipe limit. Do not reset a vault by deleting recovery files; use a new disposable vault for tests. File flushes and POSIX directory flushes are used, but real power-loss behavior on specific volumes has not been certified. Read-only recovery currently requires reviewed restoration of the metadata files; there is no automatic corruption-repair button.
 
@@ -47,7 +47,15 @@ npm run build
 
 Builds allocate a fresh directory under the operating system's temporary directory and print its path. They never overwrite checkout-root `main.js` or `data.json`. Tests create disposable sources/vaults with sentinels; they do not load an installed plugin or real vault settings. `npm run dev` watches only its newly allocated temporary output directory.
 
-The candidate manifest's API floor is corrected, while published version history stays unchanged. A separately approved release must choose its version and add the corresponding `versions.json` entry. Build attestations and directory eligibility are separate release checks; local build equality alone supplies neither.
+Version 1.0.3 maps to Obsidian 1.2.3 in `versions.json`; historical mappings remain unchanged. Run `npm run release:check` before preparing a new tag. The manual candidate workflow requires the reviewed commit and SHA-256 values for all three assets; it rejects mismatches before any attestation/upload. Workflow execution, build attestations and directory eligibility are separate checks; local build equality alone supplies neither.
+
+## Upgrade from 1.0.2
+
+1. Back up this vault's existing plugin assets and `data.json` before enabling 1.0.3. Keep that backup outside the active plugin directory. Do not import another vault's settings or use old development mappings as installation data.
+2. Replace only `main.js`, `manifest.json` and `styles.css` from the same approved release. Retain this vault's own settings. An empty legacy mapping list starts empty; valid existing mappings retain their enabled preference. Startup may create or remove verified pointers to match those saved preferences, so review the backup before upgrading a vault with mappings.
+3. On first load, inspect the settings rows and recovery messages before making changes. Unavailable sources stay listed. Conflicts are preserved for review. Preserve the new initialization marker and both recovery snapshots alongside future backups; do not delete them as a reset or blindly downgrade with stale 1.0.2 settings.
+
+The known full-metadata-wipe limitation above remains in 1.0.3. Native smoke passed on macOS with Obsidian runtime 1.14.5; it is not minimum-version, second-Mac, Windows or Linux acceptance.
 
 ## Installation
 

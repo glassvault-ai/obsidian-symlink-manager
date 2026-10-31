@@ -11,8 +11,8 @@ This is an unreleased candidate. The local run on 2026-10-30 used macOS and Node
 | `npm test` | 97 tests: 95 passed, 2 native-platform skips, zero failures |
 | `npm audit` | Zero reported vulnerabilities at the time of the run; not a guarantee against unknown vulnerabilities |
 | `npm run build` | Two in-memory production builds have identical bytes; assets and hashes written to a fresh temporary candidate directory |
-| Manual workflow definition | Parsed and checked offline: three OS runners, pinned action commits, restricted permissions, explicit attestation/upload input defaulting to false; not executed |
-| `npm run release:check` | Intentionally fails: candidate minimum differs from the published 1.0.2 history; next release version/mapping has not been selected |
+| Manual workflow definition | Parsed and checked offline: three OS runners, pinned action commits, restricted permissions, explicit attestation/upload input defaulting to false and reviewed commit/three-hash verification; not executed |
+| `npm run release:check` | Passes for prepared 1.0.3 / minimum 1.2.3. Historical mappings are preserved; no 1.0.3 tag or publication has been created. |
 
 Plugin integration tests load the production build configuration, including minification, into a mocked Obsidian/Electron host. Core tests use real macOS filesystem calls plus injected faults. Mocked UI tests do not establish native Electron or Obsidian compatibility. Test fixture cleanup checks sentinels before deleting its own temporary root.
 
@@ -94,12 +94,20 @@ The stale settings regression awaits and asserts the control's own requested-sta
 | Obsidian desktop GUI | Candidate cb323280 passed bounded native macOS smoke on runtime 1.14.5 / installer 1.11.7: add/read, nonempty settings and command toggles, rename, cancellation/removal, enabled and removed-state reloads, missing-source recovery and foreign-pointer preservation. Minimum-host, second-Mac, native real-directory conflicts and arbitrary popout/focus/Escape/click-outside checks remain open. |
 | Hardware power loss/full disk/OS-level read-only volumes | Not tested. Logical persistence faults exercised; actual power-cut ordering and device-specific errors remain unverified. |
 
+## 1.0.3 release preparation
+
+The prepared version is 1.0.3 with API minimum 1.2.3, consistent across manifest, package metadata, lockfile and version mapping. Historical 1.0.0–1.0.2 mappings and the locked dependency graph remain unchanged. Runtime source and the production JavaScript/stylesheet hashes match native-tested cb323280 exactly, so the completed correctness and native results are reused rather than rerunning the same suite for a version-only change. The manifest has new version bytes and is hashed separately.
+
+Additional isolated checks imported synthetic empty and eight-record legacy mapping lists through the production plugin bundle. The empty case created valid revision-1 snapshots and marker and remained empty across a second load. The eight-record case exercised the legacy string fields and boolean active preference with entirely disposable paths and mixed preferences. Legacy bytes and fixture sentinels were preserved. These are shape compatibility checks, not live migrations or assertions that another installation's paths are safe.
+
+The manual provenance workflow now requires an independently reviewed source commit and hashes for main.js, manifest.json and styles.css. Local verification checks clean build identity and actual bytes before any remote attestation/upload; wrong commit or asset expectations must fail. Git attributes preserve LF bytes for the two copied text assets across checkout platforms. Offline workflow and metadata checks do not create attestations or establish native Windows/Linux coverage. The workflow is intended to run before creating the new release tag because release:check rejects an existing tag. All remote execution/publication and actual installation remain subject to the readiness decision.
+
 ## Review and release gates
 
 1. Review the candidate and decide the remaining native Windows/Linux, minimum-version/second-Mac, volume and UI coverage before deployment. Missing environments are not passes.
 2. Keep a single manager per vault. Revision checks detect observed outside changes but are not a multiprocess lock. Preserve the marker, snapshots, temporary recovery evidence and legacy file before any recovery work. Downgrading can replay stale legacy data; metadata must not be synchronized between machines.
-3. Select a new release version and matching `versions.json` entry, then rerun `npm run release:check`. Do not replace published 1.0.2 assets with candidate bytes.
-4. Only after separate authorization, run the reviewed CI workflow. Verify downloaded exact assets with `gh attestation verify main.js --repo glassvault-ai/obsidian-symlink-manager` and the same command for `styles.css`. Inspect the attested source commit/workflow and compare SHA-256 values to the approved candidate/tag. Local repeatability alone is not GitHub provenance.
+3. Version 1.0.3 and its `versions.json` entry are prepared and pass `npm run release:check`. Review the exact new commit and three hashes before creating the matching tag/release. Do not replace published 1.0.2 assets.
+4. Only after separate authorization, run the reviewed CI workflow. Verify downloaded exact assets with `gh attestation verify main.js --repo glassvault-ai/obsidian-symlink-manager` and the same command for `manifest.json` and `styles.css`. Inspect the attested source commit/workflow and compare SHA-256 values to the approved candidate/tag. Local repeatability alone is not GitHub provenance.
 5. The public install control was disabled in the October 30 audit. An owner must inspect entry eligibility and Manifest/Releases/Source/Build review errors before attributing the distribution block. After an approved repair/review, verify both the enabled public control and in-app discoverability. Caution status and historical counters alone prove neither eligibility nor a particular blocker.
 
 No workflow execution, merge, publication, new submission, authentication change, real-vault plugin replacement or real settings migration was performed for this candidate.
