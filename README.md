@@ -2,11 +2,11 @@
 
 Link an external directory into an Obsidian desktop vault and manage its pointer from settings. Edits to linked notes change the original files. Disabling or removing a managed link removes its pointer, not its source contents.
 
-Version **1.0.3** is prepared for release; publication and installation approval are still pending. It fixes reliability and modal failures in 1.0.2. See [CHANGELOG.md](CHANGELOG.md) for changes and upgrade cautions. The last verified directory observation (2026-10-30) showed a disabled install control; publication alone does not establish current directory eligibility.
+Version **1.0.3** fixes reliability and modal failures in 1.0.2. See [CHANGELOG.md](CHANGELOG.md) for changes and upgrade cautions. The last verified directory observation (2026-10-30) showed a disabled install control; publication alone does not establish current directory eligibility.
 
 ## Requirements and limits
 
-- API minimum: Obsidian **1.2.3**, including the settings controls used here. Actual minimum-version UI validation is still required before a release. The imperative dashboard supports older hosts; it does not yet integrate with the settings search introduced in 1.13.
+- API minimum: Obsidian **1.2.3**, established from the APIs used, including the settings controls. Native UI behavior on that minimum version remains untested; bounded macOS native smoke passed on runtime 1.14.5. The imperative dashboard does not yet integrate with the settings search introduced in 1.13.
 - Desktop only. The implementation uses directory symlinks on macOS/Linux and junctions on Windows. Native validation status is recorded in [VALIDATION.md](VALIDATION.md); an implemented Windows path is not proof that every Windows volume is tested.
 - Sources must be accessible directories, disjoint from the vault and other configured sources. Canonical aliases and overlapping source roots are rejected. A destination must be a real folder beneath the vault's canonical root; placing links inside an existing linked folder is rejected.
 - Portable names exclude dot/dot-dot, separators, reserved device names, trailing periods/spaces and control characters. Destination names are reserved case-insensitively for portability; source identity does not blindly lowercase paths.

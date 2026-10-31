@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.3 — Prepared, not yet published
+## 1.0.3 — 2026-10-30
 
 - Keep unavailable-source mappings and their enabled preference; retry safely on startup or Refresh.
 - Check canonical source identity, overlapping roots and real destination containment. Reject traversal, unsafe names and foreign-pointer removal.
