@@ -1,3 +1,13 @@
+---
+note_id: plan 1 — Symlink Manager reliability and review compliance
+type: note
+status: implemented
+scope: project
+created_at: 2026-10-31T00:20:11.212128Z
+updated_at: 2026-10-31T00:20:11.212131Z
+created_by: unknown
+---
+
 # Plan: Symlink Manager reliability and review compliance
 
 **Date:** 2026-10-30
@@ -5,13 +15,13 @@
 **Branch:** `feature/symlink-manager-reliability`
 **Base:** `9a94ef71de8d75adc2f103fec4eff15d1ef5d0c5` (published 1.0.2 code is unchanged at this base)
 **Tags:** plan
-**Mode:** Autonomous through Phases 0–5. Core design/defaults approved. STOP before executing Wrap-up; final review is required.
+**Mode:** Phases 0–5 implemented; release and primary standalone installation completed. Applicable Wrap-up documentation/status steps authorized. Hold push for the release operator; do not archive until Alex signs off.
 
 ## Implementation status
 
 Phases 0–5 are implemented on the feature branch. Phase commits through Phase 4 are dfea2d3, f31eac9, 3073eb0, d7e39fb and 5d9f083; Phase 5 carries packaging, final regression coverage and the validation ledger. The candidate API floor resolved to 1.2.3 after checking newly used controls. The persistence contract includes a separate durable initialization marker so loss of the entire snapshot directory cannot silently reimport legacy settings. Root identity binding and post-open modal-window binding were strengthened during final validation.
 
-Local validation is recorded in VALIDATION.md: 95 passing tests, two native-platform skips, typecheck success, zero lint errors with three documented compatibility warnings, and zero reported dependency vulnerabilities. Remaining native GUI/platform/device gaps, pending provenance execution and unknown owner-dashboard eligibility remain explicit gates. Release metadata intentionally remains blocked until a separately approved new version/mapping is selected. Existing main ref and protected ignored artifacts remain unchanged.
+Local validation is recorded in VALIDATION.md: 95 passing tests, two native-platform skips, typecheck success, zero lint errors with three documented compatibility warnings, and zero reported dependency vulnerabilities. The remaining native GUI/platform/device gaps were accepted as coverage limitations for the bounded patch. Release 1.0.3 / API floor 1.2.3, provenance and primary standalone installation have since completed. Owner-dashboard eligibility remains unknown. The original main-ref freeze ended with authorized fast-forward integration; protected ignored checkout artifacts remain unchanged.
 
 An authorized corrective round after Phase 5 preserves last-readable entries and observed health when the initialization marker is missing/invalid, while keeping all recovery authority read-only. It tightens stale-control evidence, documents/tests command snapshot semantics, and explicitly reproduces the marker-first full-wipe operating limit without changing first-import UX. Original c7b56c59 candidate/evidence remains preserved; the correction is a separate commit/candidate for one corrective review.
 
@@ -19,11 +29,19 @@ The first native disposable-vault add exposed a Modal selection-field collision.
 
 The corrected candidate passed bounded native macOS smoke on Obsidian runtime 1.14.5 (installer bundle 1.11.7): real picker add/read, settings and command toggles, rename, removal cancellation/confirmation, enabled reload and removed-state reload. A temporarily unavailable fake source retained desired enablement and pointer identity; return plus Refresh recovered. A foreign pointer to fake source-B survived Refresh and disable with unchanged inode/target while desired disabled state was saved. All three sentinel hashes remained unchanged. Read-only verification validated all 18 recorded snapshot checksums and current slots 17/18; latest revision 18 is empty with no pending operation and no managed pointer remains.
 
-The unsuccessful focus attempt labeled renamed-from-settings is not counted as a rename pass; rename-after-field-press is the successful observation. Likewise, foreign-pointer-disable-refused records refusal to unlink the foreign pointer while saving disabled intent. Success followed an explicit app reload; an earlier Cmd-R attempt did not establish one. The final Console view is not a continuous log. Candidate source identity remains cb323280; this later ledger update changes documentation only, with no new build or suite run.
+The unsuccessful focus attempt labeled renamed-from-settings is not counted as a rename pass; rename-after-field-press is the successful observation. Likewise, foreign-pointer-disable-refused records refusal to unlink the foreign pointer while saving disabled intent. Success followed an explicit app reload; an earlier Cmd-R attempt did not establish one. The final Console view is not a continuous log. Native-tested runtime source identity remains cb323280; release identity is ca63b381 with identical JavaScript bytes. This ledger update changes documentation only, with no new build or suite run.
 
-Minimum-version/second-Mac GUI acceptance, broader popout/focus/cancellation, native real-directory conflicts, Windows/Linux/UNC/removable volumes and hardware power loss remain gates. Full metadata-wipe safety is not claimed; the known legacy-reimport limit, release version mapping, provenance execution and owner-dashboard eligibility remain unresolved.
+Minimum-version/second-Mac GUI acceptance, broader popout/focus/cancellation, native real-directory conflicts, Windows/Linux Obsidian GUI, UNC/removable volumes and hardware power loss remain unverified coverage limitations. Three OS CI validation jobs succeeded, separately from GUI coverage. Full metadata-wipe safety is not claimed; the known legacy-reimport limit and unknown owner-dashboard eligibility remain.
 
-**Wrap-up has not been executed. Release/install preparation is authorized by the bounded checkpoint below; external publication and live replacement remain held for readiness review.**
+**Implementation status: implemented.** Release documentation/status steps are recorded here; plan archival awaits Alex's post-completion signoff. No new source work is authorized.
+
+### Release outcome — supersedes the historical preparation boundaries below
+
+The release operator fast-forwarded main and pushed main/feature to `ca63b3812c9495fcb9374cd6858d10caaece008e`. [CI run 41148969856](https://github.com/glassvault-ai/obsidian-symlink-manager/actions/runs/41148969856) passed all three OS validation jobs and the attestation job before tagging. Downloaded artifact identity/hashes and each of the three asset attestations were verified against that commit, `refs/heads/main`, signer workflow `candidate.yml`, and rejection of self-hosted runners. The annotated `1.0.3` tag points to that exact commit; [stable latest release 1.0.3](https://github.com/glassvault-ai/obsidian-symlink-manager/releases/tag/1.0.3) is published with matching public API digests. Exact hashes and source/build identity are in VALIDATION.md.
+
+The primary standalone macOS installation displayed 1.0.3 and an empty manager in native Settings. Its two revision-1 snapshots contain empty entries/quarantine and no pending operation; its own empty legacy settings stayed byte-identical. The old development-linked installation remains excluded. A second-Mac registered-vault file install was underway at this checkpoint, without native GUI acceptance. These are release-operator observations recorded after the actual actions, not new builder tests.
+
+The implementation and release were accepted after the third independent review and a separately reviewed docs-only delta. No fourth review or additional runtime changes are included. The remainder of the original phase workflows records the approved execution history, not outstanding authorization to repeat those phases.
 
 ## Purpose
 
@@ -380,21 +398,21 @@ Finish B4/B5 preparation and the platform matrix, then deliver a reviewable cand
 5. Commit bounded preparation with relevant notes; build only to fresh temporary/evidence directories. Verify main and protected ignored artifacts, installed plugin/settings, and prior candidates remain unchanged.
 6. Deliver final commit/diffs/hashes, gate status and concrete installation recommendation for readiness review. STOP before push, merge, tag/release, workflow execution, live replacement or actual migration. No new independent review or broad feature work.
 
-**Acceptance and open gates:** 1.0.3 is prepared, not published. Installation after approval must preserve a same-vault backup of old assets/settings and never import another vault's mappings. Minimum-version, second-Mac, Windows/Linux/UNC/removable-volume, broader modal and hardware-loss coverage remain explicitly open. A total wipe of initialization evidence can still replay stale legacy data. Provenance and directory eligibility require separately approved external work. Wrap-up status/archive/merge/push steps remain deferred until installation/merge and final authorization; no plan completion is implied by this checkpoint.
+**Checkpoint outcome:** 1.0.3 is published with verified three-asset provenance, and the primary standalone installation passed empty initialization as recorded above. Existing mappings in the older development-linked installation were deliberately excluded. Minimum-version/second-Mac GUI, Windows/Linux Obsidian GUI, UNC/removable-volume, broader modal and hardware-loss coverage remain open limitations accepted for this patch. A total wipe of initialization evidence can still replay stale legacy data. Directory eligibility remains unresolved. Docs/status updates are authorized; archival still requires Alex's post-completion signoff.
 
 ---
 
 ### Wrap-up — Post-Implementation
 
-**STOP BEFORE EXECUTING THIS SECTION.** Final supervisor review is required.
+**Documentation/status steps authorized after release.** Record actual evidence and mark the plan implemented. Keep active safety/provenance constraints active. Do not archive the plan until Alex signs off. No new source, builds, tests, UI or live actions; hold the scoped documentation commit for the release operator to review before updating main.
 
-Follow the wrap-up skill at `~/.claude/skills/wrap-up/SKILL.md`. Do not reconstruct these steps from this template. Its actions remain subject to the explicit no-merge/no-release/no-live-replacement boundary above; resolve any conflict with the supervisor rather than inferring publication approval.
+Follow the wrap-up skill at `~/.claude/skills/wrap-up/SKILL.md` within this docs-only authorization. Integration/publication and primary installation have already been performed by the release operator; do not repeat them. No new routine approval question is required. Push remains held for the operator's verification of this documentation delta.
 
 **STOP.** Wait for sign-off before continuing.
 
 ## Completion criteria
 
-Every C1-C7 defect has a corrected-expectation regression and no remaining bypass route; B1-B3 are addressed with documented compatibility evidence; B4/B5 have reviewable reproducible build/attestation preparation with live execution explicitly pending. Source and outside sentinels survive all tests. Desired state, operation recovery and invalid-data handling are observable and documented. Existing working fixes remain covered. Candidate outputs exist only in isolated locations, main and live artifacts are unchanged, and every omitted native/platform/UI check is called out for review. Completion of this build does not imply release approval or directory reinstatement.
+C1-C7 fixes have corrected-expectation regressions, with non-atomic external races and full metadata-loss replay explicitly retained as limits. B1-B3 have documented API/lifecycle evidence; B4/B5 now have successful release CI and verified three-asset provenance. Source/outside sentinels survived the bounded tests. Desired state, recovery and invalid-data handling are observable and documented, and historical fixes remain covered. Main integration, immutable release 1.0.3 and primary standalone installation are complete. Protected development artifacts remain unchanged. Unperformed native/platform/UI cases are accepted coverage limitations, not passes. Plan archival awaits Alex's signoff; publication does not imply directory reinstatement.
 
 ## Consulted
 

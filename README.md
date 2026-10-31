@@ -55,7 +55,7 @@ Version 1.0.3 maps to Obsidian 1.2.3 in `versions.json`; historical mappings rem
 2. Replace only `main.js`, `manifest.json` and `styles.css` from the same approved release. Retain this vault's own settings. An empty legacy mapping list starts empty; valid existing mappings retain their enabled preference. Startup may create or remove verified pointers to match those saved preferences, so review the backup before upgrading a vault with mappings.
 3. On first load, inspect the settings rows and recovery messages before making changes. Unavailable sources stay listed. Conflicts are preserved for review. Preserve the new initialization marker and both recovery snapshots alongside future backups; do not delete them as a reset or blindly downgrade with stale 1.0.2 settings.
 
-The known full-metadata-wipe limitation above remains in 1.0.3. Native smoke passed on macOS with Obsidian runtime 1.14.5; it is not minimum-version, second-Mac, Windows or Linux acceptance.
+The known full-metadata-wipe limitation above remains in 1.0.3. Native smoke passed on macOS with Obsidian runtime 1.14.5; it is not minimum-version, second-Mac, Windows or Linux Obsidian GUI acceptance. The three OS CI validation jobs and all three release-asset attestations passed; see the [release ledger](VALIDATION.md#published-release-and-installed-behavior).
 
 ## Installation
 
