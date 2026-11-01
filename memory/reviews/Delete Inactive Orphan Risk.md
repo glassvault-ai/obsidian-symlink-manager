@@ -10,15 +10,18 @@ tags:
 - state-drift
 scope: project
 created_at: 2026-02-15T15:36:48.473555Z
-updated_at: 2026-05-09T23:21:28.527624Z
+updated_at: 2026-11-01T17:39:58.985022Z
 created_by: ai-agent
 ---
 
 # Delete Inactive Orphan Risk
 
-`removeSymlinkEntry` in `src/main.ts` only calls `removeSymlink` when `entry.active` is true. If metadata has drifted (active is false but the symlink still exists on disk — possible after a crash or interrupted toggle), deleting the entry leaves an orphaned, unmanaged symlink in the vault with no settings entry tracking it. A safer approach would check the actual filesystem state with `lstat` during deletion and unlink if a symlink exists pointing to the expected source, regardless of the `active` flag. The existing `removeSymlink` function already has the safety guard against removing non-symlink paths, so this change would be low-risk.
+The February 2026 review recorded an orphan risk in the former removal path: trusting `entry.active` could leave a pointer on disk when metadata had drifted. Its proposed repair was to inspect the filesystem and remove only the expected symlink. In source checked on 2026-11-01 at `25e2f38`, `removeSymlinkEntry` delegates to `Coordinator.remove`, which checks the pointer regardless of the saved enabled preference, commits removal intent, and calls the shared checked unlink path. A matching pointer can be removed even for a disabled mapping; an absent pointer requires no unlink. Conflicting objects are preserved, and Forget removes metadata only. The continuing lesson is to verify disk identity rather than infer it from an enabled flag.
+
+Source: `src/main.ts:95–96`, `src/reliability/coordinator.ts:136–160,207–222`, `src/reliability/files.ts:59–75,117–124`.
 
 Related:
 [[Symlink Safety Never Delete the Source Folder]]
 [[On-Load Validation of Symlinks]]
 [[Clean up broken symlinks on deactivation]]
+[[Durable operation intent prevents stale settings from resurrecting links]]

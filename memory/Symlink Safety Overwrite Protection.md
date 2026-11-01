@@ -9,11 +9,13 @@ tags:
 - validation
 scope: project
 created_at: 2026-02-15T01:25:30.444782Z
-updated_at: 2026-05-09T23:21:28.517301Z
+updated_at: 2026-11-01T17:39:58.985022Z
 created_by: ai-agent
 ---
 
-Before creating a symlink at a vault path, we must check that nothing already exists there. If a real folder (not a symlink) exists at the target path, creating a symlink would fail anyway (EEXIST), but we should catch this ourselves with a clear error message rather than letting the fs error bubble up. Check with fs.existsSync() first. If a symlink already exists at that path (from a previous session or manual creation), we should also detect this via lstatSync().isSymbolicLink() and handle it — either warn the user or offer to replace it. Never silently overwrite.
+Never overwrite an occupied destination when creating a managed symlink. In source checked on 2026-11-01 at `25e2f38`, the shared filesystem boundary uses asynchronous `lstat` and `readlink` checks, so a broken pointer still counts as an existing object. Adding a mapping requires an absent destination; a real file, directory or existing link is rejected. Enabling an existing mapping may accept a pointer only after source admission and verification that it matches the expected source. A foreign pointer is a conflict and is preserved. There is no offer-to-replace flow: Forget removes metadata only. These checks and the filesystem create operation enforce refusal rather than silent overwrite; they do not certify immunity to every concurrent filesystem race.
+
+Source: `src/reliability/files.ts:59–75,77–97,107–124`, `src/reliability/coordinator.ts:162–180,199–222,224–235`.
 
 Related:
 [[Symlink vs Directory Detection with lstatSync]]
