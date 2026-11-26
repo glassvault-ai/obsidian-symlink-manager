@@ -1,13 +1,19 @@
+---
+note_id: plan 2 — 1.0.4 clean-environment build and documentation refresh
+type: note
+status: implemented
+scope: project
+created_at: 2026-11-26T18:31:56Z
+created_by: unknown
+updated_at: 2026-11-26T18:43:49.472484Z
+---
+
 # Plan: 1.0.4 clean-environment build and documentation refresh
 
 **Date:** 2026-11-26
 **Project:** Symlink Manager (`obsidian-symlink-plugin`)
 **Branch:** `fix/scanner-build-1.0.4` (from main `da3906a`, released 1.0.3 content)
-**Mode:** autonomous.
-**Review tier:** small. Build tooling, docs and a lint bump, with no runtime behaviour change intended. If the lint bump forces a runtime source change, the tier moves up to medium and the builder escalates before making it.
 **Tags:** plan
-
-The builder follows the builder skill's build rules.
 
 ---
 
@@ -31,10 +37,8 @@ Obsidian's community scorecard runs `npm run build` on a clean copy of the relea
 
 ## How we'll know it works
 
-Evidence goes in the evidence folder named in the builder's brief.
-
 - **Tests:** the existing suite (`npm test`) passes unchanged, apart from new build checks. Add a script-level check that a git-less copy builds and that its root `main.js` hash equals the candidate hash for the same tree.
-- **Running it:** a transcript of: `git archive HEAD` into a fresh temp directory → `npm ci --ignore-scripts` → `npm run build` (exit 0) → `shasum -a 256 main.js`, compared with `node scripts/candidate.mjs` run in the worktree at the same commit. Also `npm run typecheck`, `npm run lint` (0 errors, warning list), `npm test` and `npm run release:check`, with outputs.
+- **Running it:** a transcript of: `git archive HEAD` into a fresh temp directory → `npm ci --ignore-scripts` → `npm run build` (exit 0) → `shasum -a 256 main.js`, compared with `node scripts/candidate.mjs` run in a git checkout at the same commit. Also `npm run typecheck`, `npm run lint` (0 errors, warning list), `npm test` and `npm run release:check`, with outputs.
 - **Failure cases:** `node scripts/candidate.mjs` in the git-less copy exits non-zero with the git error, captured in the transcript.
 - **Runtime unchanged:** if no `src/` file changed, the root `main.js` hash equals the published 1.0.3 asset hash (`92e0ab9e…f0d`, in VALIDATION.md). If `src/` did change, say so and explain why.
 
@@ -46,7 +50,7 @@ Evidence goes in the evidence folder named in the builder's brief.
 | Root `main.js` drifts from candidate bytes | hash equality in the same check |
 | Local lint differs from the scanner's | pinned `eslint-plugin-obsidianmd` 0.6.0 in `package.json` and the lockfile |
 
-**Judgment-only risks:** whether the scanner also needs anything beyond a successful root build, and whether its 266 `no-unsafe-*` warnings on Node `fs`/`path`/`crypto` calls clear. Only the directory's own preview scan can show that, and the maintainer runs it from the owner dashboard after this build. Don't claim either.
+**Judgment-only risks:** whether the scanner also needs anything beyond a successful root build, and whether its 266 `no-unsafe-*` warnings on Node `fs`/`path`/`crypto` calls clear. Only the directory's own preview scan can show that. Neither is claimed.
 
 ## Design
 
@@ -57,18 +61,4 @@ Evidence goes in the evidence folder named in the builder's brief.
 - **`KNOWN-ISSUES.md`** (new, repo root): settings-search API (1.13), `setWarning` → `setDestructive` (1.13), and the scanner's `no-unsafe-*` warnings pending a preview scan. One line each.
 - **Public repo:** commits, plan and notes contain architectural facts only. No personal paths, session ids or coordination details.
 
-**Does not touch:** anything under `src/reliability/`, settings or modal behaviour, persistence, the API floor, the CI attestation logic, tags, releases, `main`, and any existing plugin installation. Never run `npm run build` in another checkout whose root `main.js` may be a live installation. Work only in this worktree.
-
-**Read in full:** `Obsidian's scorecard build verification runs npm run build without a git checkout, so Symlink Manager's git-dependent build fails` · `Community review fixes — run lint baseline before editing code`
-
----
-
-## Phases
-
-### Phase 1: Clean-environment build, lint bump, docs
-
-All of the above, committed and pushed to the feature branch. A second commit is fine if the lint bump is separate.
-
-### Wrap-up
-
-Follow the wrap-up skill up to the point of publishing. Do not tag, release, merge or touch `main`. Stop and wait for sign-off.
+**Does not touch:** anything under `src/reliability/`, settings or modal behaviour, persistence, the API floor, the CI attestation logic, tags, releases, `main`, and any existing plugin installation.

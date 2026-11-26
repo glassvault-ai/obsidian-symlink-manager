@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, readFile, rm, access } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -11,12 +11,11 @@ const parent = await mkdtemp(path.join(tmpdir(), 'symlink-clean-build-'));
 const copy = path.join(parent, 'source');
 const env = { ...process.env, GIT_CEILING_DIRECTORIES: parent };
 for (const name of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE']) delete env[name];
-const run = (command, args) => spawnSync(command, args, { cwd: copy, env, encoding: 'utf8', shell: process.platform === 'win32' });
+const run = (command, args) => spawnSync(command, args, { cwd: copy, env, encoding: 'utf8', shell: command === 'npm' && process.platform === 'win32' });
 try {
  if (candidate.sourceCommit !== head || candidate.dirty !== false) throw Error('Commit all changes first: the clean-build check compares HEAD with a candidate built from the same clean tree');
  await mkdir(copy);
  execFileSync('tar', ['-x', '-C', copy], { input: execFileSync('git', ['archive', '--format=tar', head], { maxBuffer: 1 << 28 }) });
- await access(path.join(copy, '.git')).then(() => { throw Error('Archived copy unexpectedly contains .git'); }, () => {});
  if (run('git', ['rev-parse', '--git-dir']).status === 0) throw Error('Archived copy is inside a git repository');
 
  for (const [command, args] of [['npm', ['ci', '--ignore-scripts']], ['npm', ['run', 'build']]]) {
