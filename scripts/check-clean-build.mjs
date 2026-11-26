@@ -7,14 +7,13 @@ import { execFileSync, spawnSync } from 'node:child_process';
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const candidate = JSON.parse(execFileSync(process.execPath, ['scripts/candidate.mjs'], { encoding: 'utf8' }));
-if (candidate.sourceCommit !== head || candidate.dirty !== false) throw Error('Commit all changes first: the clean-build check compares HEAD with a candidate built from the same clean tree');
-
 const parent = await mkdtemp(path.join(tmpdir(), 'symlink-clean-build-'));
 const copy = path.join(parent, 'source');
 const env = { ...process.env, GIT_CEILING_DIRECTORIES: parent };
 for (const name of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE']) delete env[name];
 const run = (command, args) => spawnSync(command, args, { cwd: copy, env, encoding: 'utf8', shell: process.platform === 'win32' });
 try {
+ if (candidate.sourceCommit !== head || candidate.dirty !== false) throw Error('Commit all changes first: the clean-build check compares HEAD with a candidate built from the same clean tree');
  await mkdir(copy);
  execFileSync('tar', ['-x', '-C', copy], { input: execFileSync('git', ['archive', '--format=tar', head], { maxBuffer: 1 << 28 }) });
  await access(path.join(copy, '.git')).then(() => { throw Error('Archived copy unexpectedly contains .git'); }, () => {});
