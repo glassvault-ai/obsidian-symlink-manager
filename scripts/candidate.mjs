@@ -5,6 +5,8 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { buildOptions } from './build-options.mjs';
+const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const dirty = Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim());
 const first = await build({ ...buildOptions(), write: false, metafile: true });
 const second = await build({ ...buildOptions(), write: false });
 const javascript = first.outputFiles[0].contents;
@@ -18,8 +20,7 @@ for (const [name, bytes] of Object.entries(assets)) {
 }
 const evidence = {
  kind: 'unreleased-candidate',
- sourceCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
- dirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
+ sourceCommit, dirty,
  repeatedBuildMatches: true, hashes, externalImports: Object.values(first.metafile.outputs).flatMap(o => o.imports.map(i => i.path)),
 };
 await writeFile(path.join(directory, 'candidate.json'), JSON.stringify(evidence, null, 2) + '\n', { flag: 'wx' });

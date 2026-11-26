@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.4 — unreleased
+
+Build tooling and documentation only. No runtime source changed; the production `main.js` bytes are identical to 1.0.3.
+
+- `npm run build` no longer needs git. It type-checks and writes `main.js` to the checkout root, so it works on an extracted source copy such as the community directory's build verification.
+- The release candidate build moved to `npm run candidate`. It still records the source commit and refuses to run without git, now before writing any output.
+- Added `npm run check:clean-build`: builds a git-less archive of `HEAD` and checks that its root `main.js` matches the candidate bytes for the same commit.
+- Updated `eslint-plugin-obsidianmd` to 0.6.0. Remaining warnings are listed in `KNOWN-ISSUES.md`.
+- README: installation is from Obsidian's community plugin browser; the development section describes the new build behavior.
+
 ## 1.0.3 — 2026-10-30
 
 - Keep unavailable-source mappings and their enabled preference; retry safely on startup or Refresh.

@@ -2,7 +2,7 @@
 
 Link an external directory into an Obsidian desktop vault and manage its pointer from settings. Edits to linked notes change the original files. Disabling or removing a managed link removes its pointer, not its source contents.
 
-Version **1.0.3** fixes reliability and modal failures in 1.0.2. See [CHANGELOG.md](CHANGELOG.md) for changes and upgrade cautions. The last verified directory observation (2026-10-30) showed a disabled install control; publication alone does not establish current directory eligibility.
+Version **1.0.4** changes build tooling and documentation only; runtime behavior is the same as 1.0.3, which fixed reliability and modal failures in 1.0.2. See [CHANGELOG.md](CHANGELOG.md) for changes and upgrade cautions. Install it from Obsidian's community plugin browser.
 
 ## Requirements and limits
 
@@ -43,23 +43,29 @@ npm run typecheck
 npm run lint
 npm test
 npm run build
+npm run candidate
+npm run check:clean-build
 ```
 
-Builds allocate a fresh directory under the operating system's temporary directory and print its path. They never overwrite checkout-root `main.js` or `data.json`. Tests create disposable sources/vaults with sentinels; they do not load an installed plugin or real vault settings. `npm run dev` watches only its newly allocated temporary output directory.
+`npm run build` type-checks, then writes a production `main.js` to the checkout root, the standard Obsidian plugin layout. It does not need git, so it also works on an extracted source copy. It overwrites any existing root `main.js`: do not run it in a checkout whose root `main.js` is linked into a vault as a development installation.
 
-Version 1.0.3 maps to Obsidian 1.2.3 in `versions.json`; historical mappings remain unchanged. Run `npm run release:check` before preparing a new tag. The manual candidate workflow requires the reviewed commit and SHA-256 values for all three assets; it rejects mismatches before any attestation/upload. Workflow execution, build attestations and directory eligibility are separate checks; local build equality alone supplies neither.
+`npm run candidate` builds the release candidate into a fresh directory under the operating system's temporary directory and prints its path. It records the source commit and whether the tree was dirty, so it requires a git checkout and fails without one. It never writes checkout-root `main.js` or `data.json`. `npm run check:clean-build` archives `HEAD` without git metadata, runs `npm ci --ignore-scripts` and `npm run build` there, checks that the root `main.js` is byte-identical to the candidate built from the same clean commit, and checks that the candidate refuses to run without git. Commit changes before running it.
+
+Tests create disposable sources/vaults with sentinels; they do not load an installed plugin or real vault settings. `npm run dev` watches only its newly allocated temporary output directory.
+
+Version 1.0.4 maps to Obsidian 1.2.3 in `versions.json`; historical mappings remain unchanged. Run `npm run release:check` before preparing a new tag. The manual candidate workflow requires the reviewed commit and SHA-256 values for all three assets; it rejects mismatches before any attestation/upload. Workflow execution, build attestations and directory eligibility are separate checks; local build equality alone supplies neither.
 
 ## Upgrade from 1.0.2
 
-1. Back up this vault's existing plugin assets and `data.json` before enabling 1.0.3. Keep that backup outside the active plugin directory. Do not import another vault's settings or use old development mappings as installation data.
+1. Back up this vault's existing plugin assets and `data.json` before enabling 1.0.3 or later. Keep that backup outside the active plugin directory. Do not import another vault's settings or use old development mappings as installation data.
 2. Replace only `main.js`, `manifest.json` and `styles.css` from the same approved release. Retain this vault's own settings. An empty legacy mapping list starts empty; valid existing mappings retain their enabled preference. Startup may create or remove verified pointers to match those saved preferences, so review the backup before upgrading a vault with mappings.
 3. On first load, inspect the settings rows and recovery messages before making changes. Unavailable sources stay listed. Conflicts are preserved for review. Preserve the new initialization marker and both recovery snapshots alongside future backups; do not delete them as a reset or blindly downgrade with stale 1.0.2 settings.
 
-The known full-metadata-wipe limitation above remains in 1.0.3. Native smoke passed on macOS with Obsidian runtime 1.14.5; it is not minimum-version, second-Mac, Windows or Linux Obsidian GUI acceptance. The three OS CI validation jobs and all three release-asset attestations passed; see the [release ledger](VALIDATION.md#published-release-and-installed-behavior).
+The known full-metadata-wipe limitation above remains in 1.0.3 and 1.0.4. Native smoke passed on macOS with Obsidian runtime 1.14.5; it is not minimum-version, second-Mac, Windows or Linux Obsidian GUI acceptance. The three OS CI validation jobs and all three release-asset attestations passed; see the [release ledger](VALIDATION.md#published-release-and-installed-behavior).
 
 ## Installation
 
-Use only an approved published release for normal installation. Where the directory enables installation, use Obsidian's community browser. A manual release installation uses `main.js`, `manifest.json` and `styles.css` from that exact release in its own plugin directory. Never copy another vault's `data.json` or recovery snapshots as an installation step. Candidate UI testing belongs in a disposable vault; it does not authorize replacing an existing installation.
+Use only an approved published release for normal installation. Install from Obsidian's community plugin browser. A manual release installation uses `main.js`, `manifest.json` and `styles.css` from that exact release in its own plugin directory. Never copy another vault's `data.json` or recovery snapshots as an installation step. Candidate UI testing belongs in a disposable vault; it does not authorize replacing an existing installation.
 
 ## License
 
