@@ -7,7 +7,7 @@ tags:
 - release
 scope: project
 created_at: 2026-10-30T23:57:10.50443Z
-updated_at: 2026-10-31T00:21:17.583137365Z
+updated_at: 2026-11-26T18:38:57.81682Z
 created_by: ai-agent
 ---
 
@@ -20,3 +20,4 @@ Local repeatability does not create provenance, native GUI coverage or directory
 Related:
 [[Obsidian community plugin release requirements]]
 [[Incomplete recovery generations must never trigger legacy replay]]
+- {extended-by}[[npm run build must not need git, so candidate provenance lives only in npm run candidate]]: the candidate path is where that binding is recorded; the scanner build is separate

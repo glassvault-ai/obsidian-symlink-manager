@@ -10,7 +10,7 @@ Version 1.0.3 was published from `ca63b3812c9495fcb9374cd6858d10caaece008e`; rel
 | `npm run lint` | Zero errors; three compatibility warnings described below |
 | `npm test` | 97 tests: 95 passed, 2 native-platform skips, zero failures |
 | `npm audit` | Zero reported vulnerabilities at the time of the run; not a guarantee against unknown vulnerabilities |
-| `npm run build` | Two in-memory production builds have identical bytes; assets and hashes written to a fresh temporary candidate directory |
+| `npm run build` | In 1.0.3 this ran the candidate build: two in-memory production builds have identical bytes; assets and hashes written to a fresh temporary candidate directory. From 1.0.4 that is `npm run candidate`, and `npm run build` writes root `main.js` without git (see [1.0.4 build tooling](#104-build-tooling-and-documentation)) |
 | Manual workflow definition | Parsed and checked offline: three OS runners, pinned action commits, restricted permissions, explicit attestation/upload input defaulting to false and reviewed commit/three-hash verification; subsequently executed successfully on all three OS runners with attestation |
 | `npm run release:check` | Passed before tagging 1.0.3 / minimum 1.2.3. Historical mappings are preserved. The published tag now exists; rerunning this pre-tag guard is expected to reject it. |
 
@@ -115,6 +115,22 @@ The manual provenance workflow now requires an independently reviewed source com
 The primary standalone macOS installation was upgraded with those assets. Native Settings displayed version 1.0.3 and an empty manager. Both recovery snapshots were revision 1 with empty entries/quarantine and no pending intent; the installation's own 20-byte empty legacy settings remained unchanged. This confirms empty first-import behavior on that installation, not migration safety for arbitrary existing mappings. The second Mac completed a file-only installation into a real standalone plugin directory in its registered parent vault: exactly the three 1.0.3 release assets, API minimum 1.2.3, with matching reviewed hashes. Its operator independently verified the tag commit and all three attestations against the release source identity, refs/heads/main and candidate.yml signer. The parent vault's enabled-plugin configuration bytes/inode, app registry, and nested older plugin's four file hashes/inodes remained unchanged. Obsidian was not running; no app launch or input occurred. Native second-Mac acceptance remains pending the user opening the app. An older development-linked vault with existing mappings was excluded from this rollout.
 
 These release and installation results were reported by the release operator; this documentation update did not rerun CI, builds, tests, UI actions or live migration. The documentation commit is subsequent to the immutable release identity above.
+
+## 1.0.4 build tooling and documentation
+
+Obsidian's community scorecard runs `npm run build` on a source copy without `.git`. The 1.0.3 script crashed there on `git rev-parse HEAD`; an archived 1.0.3 copy reproduced the failure (exit 1, no `main.js`). In 1.0.4, `npm run build` type-checks and writes production `main.js` to the checkout root with no git calls. The candidate build moved to `npm run candidate`, keeps its temporary output, repeated-build equality and required git provenance, and now reads git before writing anything. The candidate workflow calls the script directly and is unchanged.
+
+Local results on macOS, Node 24.22.3:
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | Passed |
+| `npm run lint` | `eslint-plugin-obsidianmd` 0.6.0: zero errors; two warnings that need Obsidian 1.13 APIs, listed in `KNOWN-ISSUES.md` |
+| `npm test` | 97 tests: 95 passed, 2 native-platform skips, zero failures |
+| `npm run release:check` | Passed for 1.0.4 / minimum 1.2.3; historical mappings unchanged |
+| `npm run check:clean-build` | `git archive HEAD` copy with git disabled: `npm ci --ignore-scripts` and `npm run build` exit 0. Root `main.js` equals the candidate's `main.js` for the same clean commit. `candidate.mjs` in the copy exits non-zero with the git error and prints nothing. Mutations that restore the git-dependent build, change the root build options, or let the candidate swallow git errors each fail the check |
+
+No file under `src/` changed. The root `main.js` SHA-256 is `92e0ab9e17e08b831fbd95e26d007d18d8608f83224f46b75e0739589b349f0d`, the published 1.0.3 asset hash; `styles.css` is also unchanged. Only `manifest.json` has new version bytes. Whether the directory scan passes, and whether its `no-unsafe-*` warnings clear, is shown only by the directory's own preview scan; neither is claimed here. No CI run, release, tag or installation was made for 1.0.4.
 
 ## Remaining limits and follow-up
 
